@@ -11,7 +11,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <Sidebar />
       <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         <TopNav />
-        <div className="hide-scrollbar flex-1 overflow-y-auto">{children}</div>
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          {children}
+        </div>
       </main>
 
       <div className="pointer-events-none fixed left-0 top-0 z-[-1] h-full w-full overflow-hidden opacity-20">

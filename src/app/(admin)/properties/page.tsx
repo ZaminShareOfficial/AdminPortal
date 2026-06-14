@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/admin/placeholder-page";
+import { PropertiesContent } from "@/components/properties/properties-content";
 
 export default function PropertiesPage() {
-  return <PlaceholderPage page="properties" />;
+  return <PropertiesContent />;
 }

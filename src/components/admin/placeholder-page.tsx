@@ -59,7 +59,7 @@ export function PlaceholderPage({ page }: PlaceholderPageProps) {
   const content = pages[page];
 
   return (
-    <div className="p-8">
+    <div className="hide-scrollbar flex-1 overflow-y-auto p-8">
       <PageHeader {...content} />
       <div className="rounded border border-dashed border-outline-variant/30 bg-surface-container p-10 text-center">
         <p className="text-sm text-on-surface-variant">

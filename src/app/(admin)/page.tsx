@@ -194,7 +194,7 @@ const liveOrders = [
 
 export default function DashboardPage() {
   return (
-    <div className="p-8">
+    <div className="hide-scrollbar flex-1 overflow-y-auto p-8">
       <div className="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
         <div>
           <p className="mb-1 text-xs font-bold uppercase tracking-widest text-primary">
