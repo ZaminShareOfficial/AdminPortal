@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/admin/placeholder-page";
+import { TokensContent } from "@/components/tokens/tokens-content";
 
 export default function TokensPage() {
-  return <PlaceholderPage page="tokens" />;
+  return <TokensContent />;
 }

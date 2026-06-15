@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/admin/placeholder-page";
+import { UsersContent } from "@/components/users/users-content";
 
 export default function UsersPage() {
-  return <PlaceholderPage page="users" />;
+  return <UsersContent />;
 }

@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/admin/placeholder-page";
+import { OrdersContent } from "@/components/orders/orders-content";
 
 export default function OrdersPage() {
-  return <PlaceholderPage page="orders" />;
+  return <OrdersContent />;
 }

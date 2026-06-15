@@ -90,3 +90,23 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.pie-chart {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: conic-gradient(#ff7a00 0% 65%, #353534 65% 100%);
+  position: relative;
+}
+
+.pie-chart::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: #201f1f;
+  border-radius: 50%;
+}

@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/admin/placeholder-page";
+import { FinanceContent } from "@/components/finance/finance-content";
 
 export default function FinancePage() {
-  return <PlaceholderPage page="finance" />;
+  return <FinanceContent />;
 }

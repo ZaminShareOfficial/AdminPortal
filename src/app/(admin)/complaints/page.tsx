@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/admin/placeholder-page";
+import { ComplaintsContent } from "@/components/complaints/complaints-content";
 
 export default function ComplaintsPage() {
-  return <PlaceholderPage page="complaints" />;
+  return <ComplaintsContent />;
 }

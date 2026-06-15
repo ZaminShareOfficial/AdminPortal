@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/admin/placeholder-page";
+import { IpoContent } from "@/components/ipo/ipo-content";
 
 export default function IpoPage() {
-  return <PlaceholderPage page="ipo" />;
+  return <IpoContent />;
 }
