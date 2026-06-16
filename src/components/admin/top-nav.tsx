@@ -1,4 +1,5 @@
 import { Icon } from "@/components/admin/icon";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 export function TopNav() {
   return (
@@ -39,6 +40,7 @@ export function TopNav() {
           >
             <Icon name="help" />
           </button>
+          <LogoutButton />
         </div>
       </div>
     </header>

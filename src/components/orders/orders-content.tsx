@@ -1,24 +1,31 @@
 "use client";
 
 import { Icon } from "@/components/admin/icon";
+import { ApiErrorBanner } from "@/components/admin/api-error-banner";
+import type { SurveillanceOrderRow } from "@/lib/mappers/order";
 
-const orders = [
-  { id: "#ORD-88219", user: "Jerome D. (Inst-02)", initials: "JD", color: "bg-tertiary-container/20 text-tertiary", property: "Skyline Residency (SR-102)", side: "Sell", sideClass: "bg-error-container text-error", price: "$1,240.50", qty: "15.00", status: "Open", statusDot: "bg-primary", highlighted: false },
-  { id: "#ORD-88218", user: "Arcadia Mgmt.", initials: "AM", color: "bg-secondary-container/20 text-secondary", property: "Azure Marine Hub (AMH-05)", side: "Buy", sideClass: "bg-primary/10 text-primary", price: "$4,890.00", qty: "2.50", status: "Partial", statusDot: "bg-tertiary", highlighted: true },
-  { id: "#ORD-88215", user: "Sarah L.", initials: "SL", color: "bg-on-surface-variant/10 text-on-surface-variant", property: "The Gentry Estate (TGE-01)", side: "Buy", sideClass: "bg-primary/10 text-primary", price: "$980.25", qty: "100.00", status: "Open", statusDot: "bg-primary", highlighted: false },
-  { id: "#ORD-88214", user: "Vikram K.", initials: "VK", color: "bg-tertiary-container/20 text-tertiary", property: "Skyline Residency (SR-102)", side: "Sell", sideClass: "bg-error-container text-error", price: "$1,235.00", qty: "45.00", status: "Open", statusDot: "bg-primary", highlighted: true },
-  { id: "#ORD-88210", user: "Future Capital", initials: "FC", color: "bg-secondary-container/20 text-secondary", property: "The Gentry Estate (TGE-01)", side: "Buy", sideClass: "bg-primary/10 text-primary", price: "$978.00", qty: "500.00", status: "Partial", statusDot: "bg-tertiary", highlighted: false },
-];
+type FeedItem = {
+  type: string;
+  time: string;
+  dotClass: string;
+  typeClass?: string;
+  glow?: boolean;
+  summary: string;
+};
 
-const feed = [
-  { type: "Match Found", time: "12:44:02", dotClass: "bg-primary", glow: true, body: <><span className="font-semibold text-on-surface">#ORD-88214</span> matched with <span className="font-semibold text-on-surface">#ORD-88190</span> for <span className="font-bold text-primary">12.00 AMH</span>.</> },
-  { type: "Limit Buy", time: "12:43:55", dotClass: "bg-tertiary", body: <><span className="font-semibold text-on-surface">Future Capital</span> placed buy order for <span className="text-tertiary">500 TGE-01</span> tokens at $978.00.</> },
-  { type: "Security Alert", time: "12:41:20", dotClass: "bg-error", typeClass: "text-error", body: <>Rapid successive cancels detected for user <span className="font-semibold text-on-surface">User-8821</span>. Flagged for review.</> },
-  { type: "Withdrawal", time: "12:38:00", dotClass: "bg-on-surface-variant", body: <><span className="font-semibold text-on-surface">Jerome D.</span> initiated withdrawal of $45,000.00 to institutional wallet.</> },
-  { type: "Market Sell", time: "12:35:44", dotClass: "bg-primary", body: <><span className="font-semibold text-on-surface">Arcadia Mgmt.</span> executed market sell for <span className="text-primary">150.00 SR-102</span>.</> },
-];
+type OrdersContentProps = {
+  orders: SurveillanceOrderRow[];
+  feed: FeedItem[];
+  openOrderCount: number;
+  error?: string | null;
+};
 
-export function OrdersContent() {
+export function OrdersContent({
+  orders,
+  feed,
+  openOrderCount,
+  error = null,
+}: OrdersContentProps) {
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
       <div className="hide-scrollbar flex flex-1 flex-col gap-6 overflow-y-auto p-8">
@@ -33,20 +40,14 @@ export function OrdersContent() {
           </div>
         </div>
 
+        {error ? <ApiErrorBanner message={error} /> : null}
+
         <div className="grid grid-cols-4 gap-4">
-          {[
-            { label: "Property Asset", options: ["All Properties", "Skyline Residency (SR-102)", "Azure Marine Hub (AMH-05)", "The Gentry Estate (TGE-01)"] },
-            { label: "User Tier", options: ["All Tiers", "Institutional", "Retail Pro", "Standard"] },
-            { label: "Order Type", options: ["All Types", "Buy Orders", "Sell Orders"] },
-            { label: "Activity Status", options: ["Pending & Open", "Partially Filled", "Executed"] },
-          ].map((f) => (
-            <div key={f.label} className="flex flex-col gap-2 bg-surface-container p-4">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">{f.label}</label>
-              <select className="rounded border-none bg-surface-container-lowest text-xs text-on-surface focus:ring-1 focus:ring-primary/30" defaultValue={f.options[0]}>
-                {f.options.map((o) => <option key={o}>{o}</option>)}
-              </select>
-            </div>
-          ))}
+          <div className="flex flex-col gap-2 bg-surface-container p-4 md:col-span-4">
+            <p className="text-[10px] text-on-surface-variant">
+              Filters are not wired yet. The table below shows live data from GET /orders/all.
+            </p>
+          </div>
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm bg-surface-container">
@@ -69,7 +70,17 @@ export function OrdersContent() {
                 </tr>
               </thead>
               <tbody className="text-xs font-medium">
-                {orders.map((o) => (
+                {orders.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={8}
+                      className="px-6 py-10 text-center text-on-surface-variant"
+                    >
+                      No open orders in the market book.
+                    </td>
+                  </tr>
+                ) : (
+                  orders.map((o) => (
                   <tr key={o.id} className={`group border-b border-outline-variant/5 transition-colors hover:bg-surface-container-highest ${o.highlighted ? "bg-surface-container-low" : ""}`}>
                     <td className="px-6 py-4 font-mono text-primary">{o.id}</td>
                     <td className="px-6 py-4">
@@ -98,7 +109,8 @@ export function OrdersContent() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -106,29 +118,21 @@ export function OrdersContent() {
 
         <div className="grid grid-cols-3 gap-6">
           <div className="flex flex-col gap-4 bg-surface-container-low p-6">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Market Heat</span>
-              <span className="text-[10px] font-bold text-tertiary">+12.4% Vol</span>
-            </div>
-            <div className="flex h-16 items-end gap-1">
-              {[50, 66, 100, 75, 50, 83, 100].map((h, i) => (
-                <div
-                  key={i}
-                  className={`flex-1 ${i === 6 ? "bg-primary shadow-[0_0_12px_rgba(255,182,139,0.3)]" : i >= 2 ? "bg-primary/40" : "bg-primary/10"}`}
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Open Orders</span>
+            <div className="mt-2 font-headline text-3xl font-extrabold text-on-surface">{openOrderCount}</div>
           </div>
           <div className="flex flex-col gap-1 bg-surface-container-low p-6">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Average Spread</span>
-            <div className="mt-2 font-headline text-3xl font-extrabold text-on-surface">0.14<span className="ml-1 text-lg font-medium text-on-surface-variant">%</span></div>
-            <p className="mt-1 text-[10px] font-medium text-primary">-0.02% from yesterday</p>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Feed Items</span>
+            <div className="mt-2 font-headline text-3xl font-extrabold text-on-surface">{feed.length}</div>
+            <p className="mt-1 text-[10px] font-medium text-on-surface-variant">From live order book</p>
           </div>
           <div className="flex flex-col gap-1 bg-surface-container-low p-6">
             <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Order Liquidity</span>
-            <div className="mt-2 font-headline text-3xl font-extrabold text-on-surface">$2.84M</div>
-            <p className="mt-1 text-[10px] font-medium text-on-surface-variant">Aggregated across all pools</p>
+            <div className="mt-2 font-headline text-3xl font-extrabold text-on-surface">
+              {openOrderCount}
+              <span className="ml-1 text-lg font-medium text-on-surface-variant">Orders</span>
+            </div>
+            <p className="mt-1 text-[10px] font-medium text-on-surface-variant">Open market orders</p>
           </div>
         </div>
       </div>
@@ -140,7 +144,12 @@ export function OrdersContent() {
         </div>
         <div className="hide-scrollbar flex-1 overflow-y-auto p-6">
           <div className="space-y-6">
-            {feed.map((item) => (
+            {feed.length === 0 ? (
+              <p className="text-xs text-on-surface-variant">
+                No live order activity yet.
+              </p>
+            ) : (
+              feed.map((item) => (
               <div key={item.time + item.type} className="relative border-l border-outline-variant/10 pb-6 pl-6">
                 <span
                   className={`absolute left-0 top-1.5 h-1.5 w-1.5 -translate-x-[3px] rounded-full ${item.dotClass}${item.glow ? " shadow-[0_0_8px_rgba(255,182,139,0.6)]" : ""}`}
@@ -149,9 +158,12 @@ export function OrdersContent() {
                   <span className={`text-[10px] font-bold uppercase ${item.typeClass ?? "text-on-surface"}`}>{item.type}</span>
                   <span className="font-mono text-[9px] text-on-surface-variant">{item.time}</span>
                 </div>
-                <p className="text-xs leading-relaxed text-on-surface-variant">{item.body}</p>
+                <p className="text-xs leading-relaxed text-on-surface-variant">
+                  {item.summary}
+                </p>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
         <div className="bg-surface-container-low/50 p-4">

@@ -1,200 +1,201 @@
-import Image from "next/image";
 import { Icon } from "@/components/admin/icon";
+import { ApiErrorBanner } from "@/components/admin/api-error-banner";
+import { getErrorMessage } from "@/lib/api/errors";
+import { formatNumber, formatPaise, formatUsd } from "@/lib/format";
+import {
+  getPropertyStatusClass,
+  mapPropertyStatus,
+} from "@/lib/mappers/property";
+import { summarizePortfolios } from "@/lib/mappers/portfolio";
+import { loadDashboardData } from "@/lib/services/backend";
 
-const topMetrics = [
-  {
-    label: "Total Properties",
-    value: "1,248",
-    trend: "12%",
-    trendIcon: "trending_up",
-    trendClass: "text-primary",
-    valueClass: "text-on-surface",
-    icon: "domain",
-  },
-  {
-    label: "Active IPOs",
-    value: "24",
-    trend: "4 Live",
-    trendIcon: "rocket",
-    trendClass: "text-secondary",
-    valueClass: "text-secondary",
-    icon: "rocket_launch",
-  },
+export default async function DashboardPage() {
+  let error: string | null = null;
+  let propertyCount = 0;
+  let activeIpoCount = 0;
+  let openOrderCount = 0;
+  let investorCount = 0;
+  let totalInvested = "—";
+  let totalCurrent = "—";
+  let recentProperties: Array<{
+    name: string;
+    type: string;
+    valuation: string;
+    status: string;
+    statusClass: string;
+    broker: string;
+    highlighted: boolean;
+  }> = [];
+  let liveOrders: Array<{
+    symbol: string;
+    detail: string;
+    price: string;
+    time: string;
+    borderClass: string;
+    priceClass: string;
+  }> = [];
+
+  try {
+    const data = await loadDashboardData();
+    propertyCount = data.properties.length;
+    activeIpoCount = data.ipos.length;
+    openOrderCount = data.openOrders.length;
+    investorCount = data.userPortfolios.length;
+    const portfolioSummary = summarizePortfolios(data.userPortfolios);
+    totalInvested = formatPaise(portfolioSummary.totalInvested);
+    totalCurrent = formatPaise(portfolioSummary.totalCurrent);
+
+    recentProperties = data.properties.slice(0, 3).map((property, index) => ({
+      name: property.title,
+      type: property.propertyType ?? "Property",
+      valuation: formatUsd(property.valuation),
+      status: mapPropertyStatus(property.status),
+      statusClass: getPropertyStatusClass(mapPropertyStatus(property.status)),
+      broker: property.listingBroker ?? "—",
+      highlighted: index === 1,
+    }));
+
+    liveOrders = data.openOrders.slice(0, 4).map((order) => {
+      const isBuy = order.side === "BUY";
+      return {
+        symbol: order.propertyTitle,
+        detail: `${isBuy ? "Buy" : "Sell"} • ${order.remainingQuantity ?? "—"} Units`,
+        price: formatUsd(order.price),
+        time: "Live",
+        borderClass: isBuy ? "border-primary" : "border-error",
+        priceClass: isBuy ? "text-primary" : "text-on-surface",
+      };
+    });
+  } catch (loadError) {
+    error = getErrorMessage(
+      loadError,
+      "Could not load dashboard data from the backend.",
+    );
+  }
+
+  const topMetrics = [
+    {
+      label: "Total Properties",
+      value: formatNumber(propertyCount),
+      trend: "Live",
+      trendIcon: "trending_up",
+      trendClass: "text-primary",
+      valueClass: "text-on-surface",
+      icon: "domain",
+    },
+    {
+      label: "Active IPOs",
+      value: formatNumber(activeIpoCount),
+      trend: "Live",
+      trendIcon: "rocket",
+      trendClass: "text-secondary",
+      valueClass: "text-secondary",
+      icon: "rocket_launch",
+    },
   {
     label: "Total Investors",
-    value: "8.4k",
-    trend: "5.2%",
+    value: formatNumber(investorCount),
+    trend: "Live",
     trendIcon: "trending_up",
     trendClass: "text-primary",
     valueClass: "text-on-surface",
     icon: "group",
   },
   {
-    label: "24h Volume",
-    value: "$2.4M",
-    trend: "1.4%",
-    trendIcon: "trending_down",
-    trendClass: "text-error",
-    valueClass: "text-on-surface",
-    icon: "bar_chart",
-  },
-  {
-    label: "Revenue (MTD)",
-    value: "$412k",
-    trend: "On Track",
+    label: "Portfolio Value",
+    value: totalCurrent,
+    trend: "Live",
     trendIcon: "payments",
     trendClass: "text-primary",
     valueClass: "text-primary",
     icon: "account_balance_wallet",
   },
   {
-    label: "Pending Approvals",
-    value: "18",
-    trend: "5 Urgent",
-    trendIcon: "history",
+    label: "Total Invested",
+    value: totalInvested,
+    trend: "Live",
+    trendIcon: "bar_chart",
+    trendClass: "text-primary",
+    valueClass: "text-on-surface",
+    icon: "bar_chart",
+  },
+  {
+    label: "Orders Pending",
+    value: `${formatNumber(openOrderCount)} Orders`,
+    trend: "Live book",
+    trendIcon: "pending",
     trendClass: "text-tertiary",
     valueClass: "text-tertiary",
-    icon: "pending_actions",
+    icon: "pending",
   },
-];
+  ];
 
-const detailMetrics = [
+  const detailMetrics = [
   {
-    label: "Total Broker Activity",
-    value: "1,240 Actions",
-    icon: "badge",
+    label: "Active Properties",
+    value: formatNumber(propertyCount),
+    icon: "domain",
     iconClass: "text-primary",
     footer: (
-      <div className="mt-4 flex h-6 items-end gap-1">
-        <div className="h-2 flex-1 overflow-hidden rounded-full bg-primary/20">
-          <div className="h-full w-[75%] bg-primary" />
-        </div>
-        <span className="text-[10px] font-bold text-primary">Active</span>
-      </div>
+      <p className="mt-4 text-[10px] font-medium text-on-surface-variant">
+        From GET /properties
+      </p>
     ),
   },
   {
-    label: "User Complaints",
-    value: "12 Open",
-    icon: "report",
-    iconClass: "text-error",
-    valueClass: "text-error",
-    footer: (
-      <div className="mt-4 flex items-center gap-1 text-[10px] font-medium text-on-surface-variant">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-error" />
-        Requires immediate attention
-      </div>
-    ),
-  },
-  {
-    label: "Total Brokerage",
-    value: "$242.5k",
-    icon: "account_balance",
+    label: "Active IPOs",
+    value: formatNumber(activeIpoCount),
+    icon: "rocket_launch",
     iconClass: "text-secondary",
     valueClass: "text-secondary",
     footer: (
-      <div className="mt-4 flex items-center gap-1 text-[10px] font-bold text-secondary">
-        <Icon name="trending_up" className="text-xs" />
-        +8.4% this week
-      </div>
+      <p className="mt-4 text-[10px] font-medium text-on-surface-variant">
+        From GET /ipos?active=true
+      </p>
+    ),
+  },
+  {
+    label: "Investors",
+    value: formatNumber(investorCount),
+    icon: "group",
+    iconClass: "text-tertiary",
+    valueClass: "text-tertiary",
+    footer: (
+      <p className="mt-4 text-[10px] font-medium text-on-surface-variant">
+        From GET /portfolio
+      </p>
     ),
   },
   {
     label: "Orders Pending",
-    value: "48 Orders",
+    value: `${formatNumber(openOrderCount)} Orders`,
     icon: "pending",
     iconClass: "text-tertiary",
     valueClass: "text-tertiary",
     footer: (
       <p className="mt-4 text-[10px] font-medium text-on-surface-variant">
-        Current processing queue
+        From GET /orders/all
       </p>
     ),
   },
-];
+  ];
 
-const chartBars = [
-  { height: "45%", value: "$2.1M", active: false },
-  { height: "70%", value: "$3.4M", active: false },
-  { height: "95%", value: "$5.8M", active: true },
-  { height: "40%", value: "$1.8M", active: false },
-  { height: "60%", value: "$2.9M", active: false },
-];
+  const chartBars =
+    recentProperties.length > 0
+      ? recentProperties.map((property, index) => ({
+          height: `${55 + index * 15}%`,
+          value: property.valuation,
+          active: index === recentProperties.length - 1,
+        }))
+      : [];
 
-const properties = [
-  {
-    name: "The Zenith Plaza",
-    type: "Commercial",
-    valuation: "$12,450,000",
-    status: "Pending",
-    statusClass: "bg-primary-container/10 text-primary",
-    broker: "Global Realty Ltd.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBl73J3bpO5PSvptBK-cE0dAWklIMsOx0HtNGr75UduBDgYc8WrEFQI26lD6e64eh9fK1z4A_QfQqApUayu6AVZH4r7xKhuVLzm9Mu2lnJfUYR9WMhUYfcKVR7h9XC-tjnoeZH3l6F7WZL6a9ASNcDQdIEbtecobQGgGcFv8Z6K6cS0IP_k7XLw0bBOURI5EqRdS6K4yGUUXgbJWQ5L6uUD378TinhUT_CSguwT3Sb__OBRtnC8lHT74Feyk2qYzLzFn83NX-rlYqIl",
-    highlighted: false,
-  },
-  {
-    name: "Aura Residences",
-    type: "Residential",
-    valuation: "$8,200,000",
-    status: "IPO Active",
-    statusClass: "bg-secondary-container/10 text-secondary",
-    broker: "Prime Estates",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAr8JFN9uePAUjUi0616R5biM6qC7oVArZsJ4n0aqald7B68AjiIguKsH0GhyEm8O26W2i71z1hXqsmzyOYp3JE7XKp-4NGI4YfjEp-R-7FT2J1D6dY4ymktiDcQYd8HIfjJiBqb24i8RZp8mMW8dnc1riQ6K1ufH7qB3bLIo7D0DtJJ9ECNpl43ypbGtZw9lFrJux8K7C9MpsRhJUxgF3L9f4JswEylzmAVyTFygrVirAhe1ZjKvFlfViltOJBzdnt2Qh1iaFY8FpE",
-    highlighted: true,
-  },
-  {
-    name: "Logistic Hub X",
-    type: "Industrial",
-    valuation: "$15,000,000",
-    status: "Registered",
-    statusClass: "bg-tertiary-container/10 text-tertiary",
-    broker: "AssetCorp India",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuC3mjjHmzS6IobeobaXeoM_CFFSM_acYSaT_WXzoqFWsoEkQg2vVgh_r8Pxrfft9Cp5wR-NbnTNCbkmLiajuQP1fGp8FPDxBUjTffMc1mbg9EMJEaGedaTjeqBvxh8KB5jclTCuoDfIRlUkLIMod47FsoE1py4AvhKwcygMGmCMfZjDV2vUey6BNvOiJMtuo1l0DS57DYH4WW8nyVJntHdG_oGJf5QCpXn3jSPI3qvEBMRNYoiUeL5rl8AWC4MOEmSuOQkyi155p_qa",
-    highlighted: false,
-  },
-];
-
-const liveOrders = [
-  {
-    symbol: "ZENITH-RWA-24",
-    detail: "Buy • 1,200 Units",
-    price: "$1,042.50",
-    time: "Just now",
-    borderClass: "border-primary",
-    priceClass: "text-primary",
-  },
-  {
-    symbol: "AURA-LNX-11",
-    detail: "Sell • 450 Units",
-    price: "$512.20",
-    time: "2m ago",
-    borderClass: "border-error",
-    priceClass: "text-on-surface",
-  },
-  {
-    symbol: "HUBX-PREM",
-    detail: "Buy • 2,000 Units",
-    price: "$89.00",
-    time: "5m ago",
-    borderClass: "border-primary",
-    priceClass: "text-primary",
-  },
-  {
-    symbol: "ZENITH-RWA-24",
-    detail: "Buy • 50 Units",
-    price: "$1,042.55",
-    time: "12m ago",
-    borderClass: "border-primary",
-    priceClass: "text-primary",
-  },
-];
-
-export default function DashboardPage() {
   return (
     <div className="hide-scrollbar flex-1 overflow-y-auto p-8">
+      {error ? (
+        <div className="mb-6">
+          <ApiErrorBanner message={error} />
+        </div>
+      ) : null}
       <div className="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
         <div>
           <p className="mb-1 text-xs font-bold uppercase tracking-widest text-primary">
@@ -300,7 +301,12 @@ export default function DashboardPage() {
             />
           </div>
           <div className="flex h-64 items-end justify-around gap-4 border-b border-outline-variant/10 px-4">
-            {chartBars.map((bar) => (
+            {chartBars.length === 0 ? (
+              <p className="w-full py-12 text-center text-sm text-on-surface-variant">
+                No property valuation data to chart yet.
+              </p>
+            ) : (
+              chartBars.map((bar) => (
               <div
                 key={bar.value}
                 style={{ height: bar.height }}
@@ -314,7 +320,8 @@ export default function DashboardPage() {
                   {bar.value}
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -354,45 +361,50 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
-                {properties.map((property) => (
-                  <tr
-                    key={property.name}
-                    className={`transition-colors hover:bg-surface-container-high ${property.highlighted ? "bg-surface-container-low/30" : ""}`}
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded bg-surface-container-highest">
-                          <Image
-                            src={property.image}
-                            alt={property.name}
-                            width={40}
-                            height={40}
-                            className="h-full w-full object-cover opacity-60 grayscale"
-                          />
-                        </div>
-                        <span className="font-medium text-on-surface">
-                          {property.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-on-surface-variant">
-                      {property.type}
-                    </td>
-                    <td className="px-6 py-4 font-bold text-on-surface">
-                      {property.valuation}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-1 text-[10px] font-bold uppercase ${property.statusClass}`}
-                      >
-                        {property.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-on-surface-variant">
-                      {property.broker}
+                {recentProperties.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="px-6 py-8 text-center text-sm text-on-surface-variant"
+                    >
+                      No property listings available yet.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  recentProperties.map((property) => (
+                    <tr
+                      key={property.name}
+                      className={`transition-colors hover:bg-surface-container-high ${property.highlighted ? "bg-surface-container-low/30" : ""}`}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-surface-container-highest text-[10px] font-bold text-on-surface-variant">
+                            {property.name.slice(0, 2).toUpperCase()}
+                          </div>
+                          <span className="font-medium text-on-surface">
+                            {property.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-on-surface-variant">
+                        {property.type}
+                      </td>
+                      <td className="px-6 py-4 font-bold text-on-surface">
+                        {property.valuation}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-2 py-1 text-[10px] font-bold uppercase ${property.statusClass}`}
+                        >
+                          {property.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-on-surface-variant">
+                        {property.broker}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -408,7 +420,12 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="space-y-4 px-6 pb-6">
-            {liveOrders.map((order) => (
+            {liveOrders.length === 0 ? (
+              <p className="text-xs text-on-surface-variant">
+                No live orders in the market book.
+              </p>
+            ) : (
+              liveOrders.map((order) => (
               <div
                 key={`${order.symbol}-${order.time}`}
                 className={`flex items-center justify-between border-l-2 bg-surface-container-low p-3 ${order.borderClass}`}
@@ -430,7 +447,8 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-            ))}
+              ))
+            )}
             <button
               type="button"
               className="w-full bg-surface-container-highest py-3 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant transition-all hover:text-on-surface"
