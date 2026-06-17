@@ -117,7 +117,7 @@ export function FinanceContent({
                   <td className="px-6 py-4 text-right text-sm font-medium text-on-surface">{p.volume}</td>
                   <td className={`px-6 py-4 text-right text-sm font-bold ${p.commissionMuted ? "text-on-surface-variant" : "text-primary"}`}>{p.commission}</td>
                   <td className="px-6 py-4 text-center">
-                    <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${p.status === "PENDING" ? "border-secondary/20 bg-secondary/10 text-secondary" : "border-green-500/20 bg-green-500/10 text-green-500"}`}>{p.status}</span>
+                    <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${p.status === "PENDING" ? "border-secondary/20 bg-secondary/10 text-secondary" : "border-success/20 bg-success/10 text-success"}`}>{p.status}</span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button type="button" aria-label="View details" className="text-on-surface-variant transition-colors hover:text-primary">

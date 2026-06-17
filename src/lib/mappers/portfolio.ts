@@ -107,7 +107,7 @@ export function mapHolderToRow(
     wallet: shortId(holder.userId),
     userName: holder.userName,
     kyc: "Portfolio Holder",
-    kycDot: "bg-green-500",
+    kycDot: "bg-success",
     tokens: formatNumber(holder.tokenQuantity),
     pct: formatPercent(pct),
     barColor: rank <= 2 ? "bg-primary" : "bg-secondary",
@@ -116,7 +116,7 @@ export function mapHolderToRow(
       rank === 1
         ? "from-primary to-secondary"
         : rank === 2
-          ? "from-tertiary to-blue-500"
+          ? "from-tertiary to-tertiary-container"
           : "from-on-surface-variant to-background",
     highlighted: rank === 2,
   };

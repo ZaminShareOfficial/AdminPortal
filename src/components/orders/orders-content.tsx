@@ -97,7 +97,7 @@ export function OrdersContent({
                     <td className="px-6 py-4 text-right font-mono">{o.qty}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
-                        <div className={`h-1.5 w-1.5 rounded-full ${o.statusDot} shadow-[0_0_8px_rgba(255,182,139,0.5)]`} />
+                        <div className={`h-1.5 w-1.5 rounded-full ${o.statusDot} shadow-primary-glow`} />
                         <span>{o.status}</span>
                       </div>
                     </td>
@@ -152,7 +152,7 @@ export function OrdersContent({
               feed.map((item) => (
               <div key={item.time + item.type} className="relative border-l border-outline-variant/10 pb-6 pl-6">
                 <span
-                  className={`absolute left-0 top-1.5 h-1.5 w-1.5 -translate-x-[3px] rounded-full ${item.dotClass}${item.glow ? " shadow-[0_0_8px_rgba(255,182,139,0.6)]" : ""}`}
+                  className={`absolute left-0 top-1.5 h-1.5 w-1.5 -translate-x-[3px] rounded-full ${item.dotClass}${item.glow ? " shadow-primary-glow-strong" : ""}`}
                 />
                 <div className="mb-1 flex items-start justify-between">
                   <span className={`text-[10px] font-bold uppercase ${item.typeClass ?? "text-on-surface"}`}>{item.type}</span>

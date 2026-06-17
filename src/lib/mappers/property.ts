@@ -22,7 +22,7 @@ export type PropertyRow = {
 };
 
 const statusStyles: Record<PropertyRowStatus, string> = {
-  Verified: "border border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
+  Verified: "border border-success/20 bg-success/10 text-success",
   "Pending Review":
     "border border-secondary/20 bg-secondary-container/20 text-secondary",
   "IPO Active":

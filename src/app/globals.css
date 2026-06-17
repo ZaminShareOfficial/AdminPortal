@@ -26,9 +26,16 @@
   --on-secondary-container: #382700;
   --tertiary: #95ccff;
   --tertiary-container: #00a8ff;
+  --on-tertiary: #003355;
   --outline: #a78b7c;
   --outline-variant: #584235;
   --error: #ffb4ab;
+  --error-container: #93000a;
+  --on-error: #690005;
+  --on-error-container: #ffdad6;
+  --success: #6ee7b7;
+  --success-container: #00531b;
+  --on-success: #002108;
 }
 
 @theme inline {
@@ -56,11 +63,19 @@
   --color-on-secondary-container: var(--on-secondary-container);
   --color-tertiary: var(--tertiary);
   --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary: var(--on-tertiary);
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
   --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-on-error: var(--on-error);
+  --color-on-error-container: var(--on-error-container);
+  --color-success: var(--success);
+  --color-success-container: var(--success-container);
+  --color-on-success: var(--on-success);
   --font-sans: var(--font-inter);
   --font-headline: var(--font-manrope);
+  --font-label: var(--font-inter);
 }
 
 body {
@@ -73,13 +88,33 @@ body {
   font-family: var(--font-manrope), sans-serif;
 }
 
+.font-label {
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
   vertical-align: middle;
 }
 
 .saffron-gradient {
-  background: linear-gradient(135deg, #ffb68b 0%, #ff7a00 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-container) 100%
+  );
+}
+
+.shadow-primary-soft {
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.shadow-primary-glow {
+  box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 50%, transparent);
+}
+
+.shadow-primary-glow-strong {
+  box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 60%, transparent);
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -89,24 +124,4 @@ body {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-.pie-chart {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: conic-gradient(#ff7a00 0% 65%, #353534 65% 100%);
-  position: relative;
-}
-
-.pie-chart::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100px;
-  height: 100px;
-  background: #201f1f;
-  border-radius: 50%;
 }

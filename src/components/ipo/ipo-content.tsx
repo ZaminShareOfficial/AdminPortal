@@ -35,7 +35,7 @@ export function IpoContent({ ipos, error = null }: IpoContentProps) {
             <Icon name="history" className="text-primary" />
             View Logs
           </button>
-          <button type="button" className="saffron-gradient flex items-center gap-2 rounded px-6 py-2.5 text-sm font-bold text-on-primary-fixed shadow-[0_0_20px_rgba(255,182,139,0.08)] transition-all hover:brightness-110">
+          <button type="button" className="saffron-gradient shadow-primary-soft flex items-center gap-2 rounded px-6 py-2.5 text-sm font-bold text-on-primary-fixed transition-all hover:brightness-110">
             <Icon name="rocket_launch" filled className="text-primary" />
             Launch New IPO
           </button>
@@ -102,7 +102,7 @@ export function IpoContent({ ipos, error = null }: IpoContentProps) {
                           <span className="text-on-surface-variant">{ipo.progressLabel}</span>
                         </div>
                         <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-container-lowest">
-                          <div className={`h-full rounded-full ${ipo.progress === 100 ? "bg-tertiary" : ipo.dimmed ? "bg-outline-variant" : "bg-primary shadow-[0_0_8px_rgba(255,182,139,0.5)]"}`} style={{ width: `${ipo.progress}%` }} />
+                          <div className={`h-full rounded-full ${ipo.progress === 100 ? "bg-tertiary" : ipo.dimmed ? "bg-outline-variant" : "bg-primary shadow-primary-glow"}`} style={{ width: `${ipo.progress}%` }} />
                         </div>
                       </div>
                     </td>
