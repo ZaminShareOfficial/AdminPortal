@@ -30,7 +30,7 @@ export function TopNav() {
             aria-label="Notifications"
             className="relative text-on-surface-variant transition-colors hover:text-primary"
           >
-            <Icon name="notifications" />
+            <Icon name="notifications" className="text-[20px]" />
             <span className="absolute right-0 top-0 h-2 w-2 rounded-full border-2 border-surface bg-primary" />
           </button>
           <button
@@ -38,7 +38,7 @@ export function TopNav() {
             aria-label="Help"
             className="text-on-surface-variant transition-colors hover:text-primary"
           >
-            <Icon name="help" />
+            <Icon name="help" className="text-[20px]" />
           </button>
           <LogoutButton />
         </div>

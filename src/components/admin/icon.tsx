@@ -7,10 +7,8 @@ type IconProps = {
 export function Icon({ name, className = "", filled = false }: IconProps) {
   return (
     <span
-      className={`material-symbols-outlined ${className}`}
-      style={{
-        fontVariationSettings: filled ? '"FILL" 1' : '"FILL" 0',
-      }}
+      className={`material-symbols-outlined inline-block shrink-0 leading-none ${filled ? "material-symbols-filled" : ""} ${className}`.trim()}
+      aria-hidden
     >
       {name}
     </span>

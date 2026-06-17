@@ -24,7 +24,7 @@ export function LogoutButton() {
       aria-label="Sign out"
       title="Sign out"
     >
-      <Icon name="logout" />
+      <Icon name="logout" className="text-[20px]" />
     </button>
   );
 }
