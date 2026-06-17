@@ -1,0 +1,23 @@
+---
+description: When making API calls to BackEnd services
+globs: 
+alwaysApply: false
+---
+# BackEnd API calls
+
+- use the utils/api.ts function for invoking api calls
+
+## To make API call use code as below in your component.
+```ts
+import { createApiClient } from "@/utils/api";
+import { useAuth } from "@/hooks/useAuth";
+
+const YourComponent = () => {
+    const { token } = useAuth();
+    const apiClient = createApiClient(token);
+    const fetchData = async () => {
+        const response = await apiClient.get<YourDataType>("/your-endpoint");
+        // ... use response.data
+    };
+};
+```

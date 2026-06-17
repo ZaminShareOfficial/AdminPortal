@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Coding pattern preferences
+
+– Always prefer simple solutions.
+– Avoid duplication of code whenever possible, which means checking for other areas of the codebase that might already have similar code and functionality.
+- While building a new component or updating an exisitng component, always check for any repeated components in other parts of code. If there is a major similarity between the components and if it is a custom made component (not directly imported from library) then extract out the component and reuse it.
+– Write code that takes into account the different environments: dev, test, staging and prod.
+– You are careful to only make changes that are requested or you are confident are well understood and related to the change being requested. Do not make any changes if unsure.
+– When fixing an issue or bug, do not introduce a new pattern or technology without first exhausting all options for the existing implementation. Confirm and ask before implementing a new technology.
+– Keep the codebase very clean and organized.
+– Avoid writing scripts in files if possible, especially if the script is likely only to be run once.
+– Avoid having files over 200–300 lines of code. Refactor at that point.
+– Mocking data is only needed for tests, never mock data for dev or prod.
+– Never add stubbing or fake data patterns to code that affects the dev or prod environments.
+– Never overwrite my .env file without first asking and confirming.
+- Always use latest packages.
+- Avoid hardcoding of parameter values and everything should be defined in constants file instead.
+- Optimise for state changes in react components.
+- Dont create components longer than 200 lines.
+- Only use Hero UI for components. Do not create any unnecessary native html tags and classname.
+- Use arrow function based approach wherever possible instead of defining functions. Example, const a = () => {} instead of function a() {}
+- If in any component, an image as to be used, the image (png, jpg, svg or any extension) file has to be saved in public directory and not as a function or const in the same component file.
+- Use double quotes wherever possible instead of single quotes. Example, in the import statements, while declaring CSS classnames, using strings anywhere, etc.
+- Don't add trailing commas anywhere. For example, after the last item in an array, last propoerty in an object, etc.
+- Try using as many Next JS features as possible instead of native html, css and React features. For example, use Link instead of a href tag, etc.
+- Use onPress callback instead of onClick for Hero UI buttons

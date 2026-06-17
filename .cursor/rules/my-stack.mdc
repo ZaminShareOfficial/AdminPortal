@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Technical stack
+
+Do not suggest any tech stack outside of this. Only limit your implementations to this stack. If the solution cannot be achieved by this stack. Please provide the options and implement only when I confirm.
+
+– Python for the backend  
+– Next JS for the frontend  
+- Always use Typescript instead of Javascript.
+- React flow as a library for graph based use cases.
+- Hero UI as the component Library. Whenever a component has to be created, check the closest matching component in HeroUI, install it and use the same.
+– No direct DB interaction. Only use APIs
+- Supabase has to be used for authentication functionality including SSO.

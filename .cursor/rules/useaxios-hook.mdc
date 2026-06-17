@@ -1,0 +1,116 @@
+# useAxios Hook Usage
+
+## Core Rules
+
+- **Always use `useAxios` hook** from `@/hooks/useAxios` for all API calls
+- **Never use direct API calls** in components (no `createApiClient` in components)
+- **Create service layer** for all API endpoints in `*ApiService.ts` files
+
+## File Structure
+
+```
+app/[feature]/_complex_components/services/[Feature]ApiService.ts
+```
+
+## Hook Pattern
+
+```typescript
+// Service file
+export const useFetchResource = (id: string) => {
+    return useAxios<ResourceDto>(`/resources/${id}`, {
+        method: "GET"
+    });
+};
+```
+
+## Component Usage
+
+### With Dynamic Parameters
+```typescript
+const { startFetch } = useCreateResource();
+
+const handleSubmit = async (values: any) => {
+    await startFetch({
+        data: values
+    });
+};
+```
+
+## Type Safety
+
+Always provide explicit TypeScript types:
+
+```typescript
+// Good
+return useAxios<WorkflowDto[]>("/workflows", { method: "GET" });
+
+// Bad - missing type
+return useAxios("/workflows", { method: "GET" });
+```
+
+## Common Patterns
+
+### Fetch on Mount
+```typescript
+useEffect(() => {
+    startFetch();
+}, [startFetch]);
+```
+
+### Polling
+```typescript
+useEffect(() => {
+    const intervalId = setInterval(() => {
+        startFetch();
+    }, 2000);
+    return () => clearInterval(intervalId);
+}, [startFetch]);
+```
+
+### Handle Side Effects
+```typescript
+useEffect(() => {
+    if (data?.id) {
+        handleSuccess(data.id);
+    }
+}, [data]);
+
+useEffect(() => {
+    if (error) {
+        handleError(error.message);
+    }
+}, [error]);
+```
+
+## Built-in Features (Automatic)
+
+- Authentication token injection
+- Loading state management
+- Error handling (401, 403, 404, 429, 500)
+- Request cancellation on unmount
+- Compression for large payloads (>128KB)
+- Analytics tracking for errors
+- Retry logic for rate limits and server errors
+
+## Constants
+
+Define reusable endpoint values in constants:
+
+```typescript
+// constants/endpoint-constants.ts
+export const EXECUTION_TRIGGERED_BY_INTERFACE = "interface";
+
+// Usage in service
+params: {
+    executionTriggeredBy: EXECUTION_TRIGGERED_BY_INTERFACE
+}
+```
+
+## Checklist for New API Endpoints
+
+- [ ] Create service file in correct location
+- [ ] Export hook with descriptive name
+- [ ] Add explicit TypeScript types
+- [ ] Use descriptive variable names when destructuring
+- [ ] Handle loading, error, and success states
+- [ ] Define constants for reusable values

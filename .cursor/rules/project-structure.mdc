@@ -1,0 +1,67 @@
+---
+description: Project strcuture to be used for adding any new file
+globs: 
+alwaysApply: false
+---
+
+# Ideal structure for the next js app
+- Whenever adding/editing a file, follow the below project structure
+my-next-app/
+├── public/                             # Static assets (images, fonts, etc.)
+├── app/                                # App Router entry point (layouts, pages, routes)
+│   ├── api/                            # API routes
+│   ├── dashboard/                      # Example route (app/dashboard)
+│       ├── _complex_components         # Example route having its own complex components (complex components has its own functionality like API calls)
+│           ├── api/                    # Single location containing all code for interacting with backend, other services, etc.
+│               ├── index.ts            # Example file handling API requests
+│           ├── components/             # Individual components used in the mentioned route
+│               ├── component_1/        # Example component directory
+│                   ├── component_1.tsx # Component TSX element
+│               ├── component_2/        # Example component directory
+│                   ├── component_2.tsx # Component TSX element
+│           ├── hooks/                  # All the hooks that are utilized in the components in one place
+│               ├── index.ts            # Example file
+│       ├── page.tsx                    # Dashboard route having its page
+│   ├── layout.tsx                      # Root layout (includes ThemeProvider, CssBaseline)
+│   └── page.tsx                        # Home page
+│
+├── components/                     # Reusable Components
+│   ├── api/                        # Single location containing all code for interacting with backend, other services, etc.
+|       |── api/                    # Single location containing all code for interacting with backend, other services, etc.
+│           ├── index.ts            # Example file handling API requests
+│       ├── components/             # Individual components used in the mentioned route
+│           ├── component_1/        # Example component directory
+│               ├── component_1.tsx # Component TSX element
+│           ├── component_2/        # Example component directory
+│               ├── component_2.tsx # Component TSX element
+│       ├── hooks/                  # All the hooks that are utilized in the components in one place
+│           ├── index.ts            # Example file
+│       
+│
+├── features/                  # Feature-based modules
+│   └── auth/                  # Example: auth logic and UI
+│       ├── components/
+│       ├── hooks/
+│       └── services/
+│
+├── lib/                       # Reusable logic / helpers (e.g., formatDate, debounce)
+├── styles/                    # Global styles (e.g., font imports, base overrides)
+│   ├── theme.ts               # Custom theme config
+│   └── globals.css            # Optional: global CSS overrides (e.g., scrollbars, fonts)
+├── constants/                 # Constants (roles, routes, enums)
+├── utils/                     # Parent folder containing all utils
+|   |── supabase/              # Folder containing all utils related to supabase
+|       |── component_1.ts     # util file
+├── config/                    # App-level config (env, API base URLs, etc.)
+├── types/                     # Global types and interfaces
+├── middleware.ts              # Next.js middleware
+└── @core/                     # Core services / logic
+    ├── api/                  # API clients (fetchers, axios)
+    ├── auth/                 # Auth logic
+    ├── store/                # Global state (e.g., Zustand, Redux if used)
+    └── logger.ts
+├── .env.local                     # Environment variables
+├── next.config.js                 # Next.js configuration
+├── tsconfig.json                  # TypeScript config and aliases
+├── package.json
+└── README.md

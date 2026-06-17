@@ -1,0 +1,220 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Follow this document as a guide to help for write up for any task ticket:
+
+Template:
+
+Ticket Title: [Feature/Bug/Enhancement]: [Brief, Specific Description]
+
+1. 🎯 Goal / Problem Statement:
+- [Goal or Problem]
+- Associated Epic/Initiative (Optional): [Link]
+
+2. 📝 Requirement Description:
+- [Detailed Explanation/Steps to Reproduce]
+
+3. ↔️ Input/Output & Contracts:
+- For APIs:
+    - Request:
+        - Method: [POST/GET/PUT/DELETE]
+        - Endpoint: [/api/v1/...]
+        - Headers: [e.g., Content-Type, Authorization]
+        - Body: [e.g., JSON payload, form-data]
+    - Response:
+        - Success (e.g., 200 OK): [Success Payload]
+        - Error (e.g., 400/401/500): [Error Payload]
+- For UI Components/Modules:
+    - Inputs (Props): [List props and types]
+    - Outputs (Events/State): [List events or state changes]
+- For Other Processes:
+    - Data In: [Format and description]
+    - Data Out: [Format and description]
+    - Expected Behavior: [Description]
+
+4. ✅ Acceptance Criteria:
+- [ ] [Testable Condition 1]
+- [ ] [Testable Condition 2]
+- [ ] [...]
+
+5. 🧪 Testing Plan:
+- Positive Test Cases:
+    - [Scenario] Expected: [Outcome]
+- Negative Test Cases:
+    - [Scenario] Expected: [Outcome]
+- Edge Cases:
+    - [Scenario] Expected: [Outcome]
+- Overall Testing Strategy: [e.g., Unit, Integration, Manual, E2E]
+
+6. 🖼️ Resources & Links:
+- Design Mockups: [Link]
+- Product Docs/Requirements: [Link]
+- Related Tickets/Dependencies: [Link]
+- Other Supporting Info: [Link]
+
+7. 🧠 Engineer's Corner & Operational Details:
+- Code & System Context:
+    - Repository: [Link/Name]
+    - Service/Domain Area: [Name]
+    - Key Modules/Components Affected: [List]
+    - Relevant Existing Code: [Link/Path or "None"]
+- Implementation Notes & Approach:
+    - [Notes]
+    - Core Business Logic/Algorithms: [Notes or "N/A"]
+- Data & Persistence:
+    - Persistence Needs: [e.g., DB, S3, Cache, "None"]
+    - Schema Changes: [Description or "N/A"]
+- Performance & Reliability:
+    - Memory Requirements: [Notes or "N/A"]
+    - Time/SLA Requirements: [Notes or "N/A"]
+    - Retryability/Idempotency Needs: [Notes or "N/A"]
+    - Key Error Scenarios & Handling: [Notes or "N/A"]
+- Deployment & Operations:
+    - Deployment Target: [e.g., K8s, Lambda, Serverless]
+    - Deployment Method Notes: [Notes or "N/A"]
+    - Required Environment Variables: [List or "N/A"]
+    - Auditing/Logging Requirements: [Notes or "N/A"]
+- Specific Validations (Highlights):
+    - Empty File/Input Validations: [Notes or "N/A"]
+- Open Questions/Potential Challenges:
+    - [Question 1]
+    - [Challenge 1]
+
+
+Template Example:
+
+
+Ticket Title: [Feature/Bug/Enhancement]: Brief, Specific Description of the Task
+Example for Feature: [Feature]: Implement user profile image upload
+Example for Bug: [Bug]: User login fails with incorrect password message not showing
+Example for Enhancement: [Enhancement]: Improve performance of the main dashboard loading
+1. 🎯 Goal / Problem Statement:
+(Clearly state what this task aims to achieve or what problem it solves. For features, focus on user value. For bugs, describe the issue's impact.)
+Example (Feature): "To allow users to personalize their profiles by uploading an avatar, which will increase user engagement."
+Example (Bug): "The current login form does not provide clear feedback to the user when they enter an incorrect password, leading to confusion and repeated failed attempts. This task will fix the missing error message."
+Associated Epic/Initiative (Optional): [Link to Epic or larger project document]
+2. 📝 Requirement Description:
+(Provide a detailed explanation of the feature's functionality, the steps to reproduce a bug, or the specifics of the desired enhancement. Be as clear and comprehensive as possible.)
+Example (Feature): "A new 'Upload Image' button should be added to the user's profile page. Clicking this button should open a file selector allowing users to choose a JPG or PNG image. After selection, the image should be previewed, and upon confirmation, uploaded and displayed as their new profile avatar. Maximum file size is 2MB."
+Example (Bug):
+"Steps to Reproduce:
+Go to the login page.
+Enter a valid username.
+Enter an incorrect password.
+Click 'Login'.
+Actual Behavior: The page reloads, fields are cleared, but no error message is shown.
+Expected Behavior: An error message like 'Invalid username or password' should be displayed clearly below the login button."
+Example (Enhancement): "The main dashboard currently takes an average of 5 seconds to load. This task aims to reduce the load time to under 2 seconds by optimizing database queries for widgets X and Y, and implementing lazy loading for the activity feed."
+3. ↔️ Input/Output & Contracts:
+(Define the specific inputs, outputs, and interaction contracts for the component, API, or process being built or modified. This is crucial for clear integration.)
+For APIs:
+Request:
+Method: POST
+Endpoint: /api/v1/users/{userId}/avatar
+Headers: Content-Type: multipart/form-data, Authorization: Bearer <token>
+Body (form-data): file: <image_file.jpg/png>
+Response:
+Success (200 OK): { "avatarUrl": "https://cdn.example.com/path/to/image.jpg" }
+Error (400 Bad Request - e.g., invalid file type/size): { "error": "Invalid file type. Only JPG/PNG allowed.", "code": "INVALID_FILE_TYPE" }
+Error (401 Unauthorized): { "error": "Authentication required.", "code": "AUTH_REQUIRED" }
+For UI Components/Modules:
+Inputs (Props):
+imageUrl: string (URL of the current avatar)
+onImageUpload: (file: File) => void (Callback function when a new image is selected)
+maxFileSizeMB: number (default: 2)
+Outputs (Events emitted/State changes):
+uploadSuccess event with { newImageUrl: string }
+uploadError event with { errorMessage: string }
+Internal state changes: isLoading: boolean
+For Other Processes (e.g., Data Transformation Script):
+Data In: Raw sales data (CSV format: order_id,product_name,quantity,price,date)
+Data Out: Aggregated daily sales report (JSON format: { "date": "YYYY-MM-DD", "total_sales": 1500.75, "total_orders": 25 })
+Expected Behavior: The script reads the CSV, groups sales by date, calculates total revenue and order count for each day, and outputs a JSON file.
+4. ✅ Acceptance Criteria:
+(Provide a checklist of observable and testable conditions that must be met for this task to be considered complete. Think from a user's or system's perspective.)
+[ ] User can click an 'Upload Image' button on their profile page.
+[ ] Clicking the button opens a native file selector.
+[ ] User can select a JPG or PNG file.
+[ ] If a file larger than 2MB is selected, an appropriate error message is shown.
+[ ] If an invalid file type (not JPG/PNG) is selected, an error message is shown.
+[ ] After a valid image is selected and confirmed, it is uploaded to the server.
+[ ] The newly uploaded image is displayed as the user's profile avatar.
+[ ] The system correctly returns a 200 OK response with the new avatar URL on successful upload.
+[ ] The system correctly returns a 400 Bad Request error if the uploaded file is invalid.
+5. 🧪 Testing Plan:
+(Outline the strategy for testing this feature/bug fix. Include specific scenarios.)
+Positive Test Cases:
+(What should happen when the user does things correctly with valid data?)
+
+
+Upload a valid JPG image under 2MB. Expected: Success, image updates.
+
+
+Upload a valid PNG image under 2MB. Expected: Success, image updates.
+Negative Test Cases:
+(What should happen when things go wrong or the user provides invalid input?)
+
+
+Attempt to upload a GIF file. Expected: Error message, no upload.
+
+
+Attempt to upload a JPG image that is 3MB. Expected: Error message, no upload.
+
+
+Try to upload without being logged in (if applicable). Expected: Authentication error.
+Edge Cases:
+(What are the less common scenarios or boundary conditions to consider?)
+
+
+Upload an image with the maximum allowed dimensions (if any).
+
+
+Upload an image with the minimum allowed dimensions (if any).
+
+
+Cancel the file selection dialog. Expected: No change, no error.
+
+
+Network interruption during upload. Expected: Graceful failure, appropriate message.
+Overall Testing Strategy:
+(e.g., "Unit tests for the image validation logic. Manual UI testing across Chrome and Firefox. Integration test for the API endpoint. No E2E tests required for this specific change.")
+6. 🖼️ Resources & Links:
+(Provide direct links to any relevant design mockups, product requirement documents, spreadsheets, API documentation, or related tasks.)
+Design Mockups: [Link to Figma/XD/Sketch file, specific artboard if possible]
+Product Docs/Requirements: [Link to Confluence page, Google Doc, etc.]
+Related Tickets/Dependencies: [Link to JIRA/ClickUp ticket #123, #456]
+Other Supporting Info: [Link to competitor analysis, technical documentation, etc.]
+7. 🧠 Engineer's Corner & Operational Details:
+(This space is for the engineering team. Document technical decisions, implementation ideas, components to be affected, and operational considerations.)
+Code & System Context:
+Repository: [e.g., github.com/your-org/your-repo]
+Service/Domain Area: [e.g., Payments, User Profile, Order Processing]
+Key Modules/Components Affected: [e.g., OrderService.java, CheckoutController.js]
+Relevant Existing Code to Understand/Refactor: [Link or path to code, or "None"]
+Implementation Notes & Approach:
+(Suggested approach, algorithms, libraries, design patterns)
+Core Business Logic/Algorithms (if complex): [Describe any specific or non-obvious logic here]
+Data & Persistence:
+Persistence Needs (DB, File System, etc.): [e.g., PostgreSQL, S3 bucket, Redis cache, or "None"]
+Schema Changes (DB table, columns, indexes): [Describe changes or "N/A". e.g., "Add 'last_login_ip' (VARCHAR 255) to 'users' table."]
+Performance & Reliability:
+Memory Requirements: [e.g., Standard, High-memory profile needed, <100MB heap]
+Time/SLA Requirements: [e.g., API response < 200ms average, Batch job completion < 5 mins]
+Retryability/Idempotency Needs: [e.g., "Must be idempotent." or "Retry up to 3 times with exponential backoff for transient errors." or "N/A"]
+Key Error Scenarios & Handling (beyond basic validation): [Describe specific complex error handling. e.g., "If downstream service X is unavailable, queue request for later processing."]
+Deployment & Operations:
+Deployment Target: [e.g., K8s (production cluster), AWS Lambda (your-service-prod), Step Function, Serverless Framework]
+Deployment Method Notes: [e.g., Standard CI/CD pipeline via Jenkins. No manual steps. or "Requires manual migration script execution post-deploy."]
+Required Environment Variables (New or Changed): [List any. e.g., NEW_SERVICE_API_KEY, UPDATED_TIMEOUT_MS]
+Auditing/Logging Requirements: [Specific events to log, log level, audit trail needs. e.g., "Log successful profile updates at INFO level. Log failed login attempts with reason at WARN level."]
+Specific Validations (Highlights):
+Empty File/Input Validations (if critical or complex): [Specific rules if critical. e.g., "Empty CSV upload should result in 'NO_DATA_FOUND' error, not system crash." or "N/A"]
+Open Questions/Potential Challenges:
+(Any questions for product/design, or foreseeable technical hurdles)
+[e.g., "Clarification needed on how to handle XYZ edge case from Product."]
+[e.g., "Potential performance bottleneck in current ABC module if traffic increases."]
+
+
+
