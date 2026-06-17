@@ -1,4 +1,4 @@
-import { UsersContent } from "@/components/users/users-content";
+import { UsersContent } from "@/features/users";
 import { getErrorMessage } from "@/lib/api/errors";
 import { mapUserPortfolioToRow } from "@/lib/mappers/portfolio";
 import { listUserPortfolios } from "@/lib/services/backend";

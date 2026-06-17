@@ -25,6 +25,7 @@ describe("order mappers", () => {
       expect(actual.sideClass).toContain("primary");
       expect(actual.initials).toBe("BY");
       expect(actual.id).toBe("#ABC12345");
+      expect(actual.orderId).toBe("abc12345-6789-0000-0000-000000000001");
       expect(actual.price).toBe("$125.50");
       expect(actual.qty).toBe("8.00");
     });

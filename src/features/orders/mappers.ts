@@ -6,6 +6,7 @@ export function mapOpenOrderToRow(order: OpenOrder): SurveillanceOrderRow {
 
   return {
     id: `#${order.orderId.slice(0, 8).toUpperCase()}`,
+    orderId: order.orderId,
     user: "Market participant",
     initials: isBuy ? "BY" : "SL",
     color: isBuy

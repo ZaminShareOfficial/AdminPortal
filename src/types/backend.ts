@@ -154,3 +154,108 @@ export type IpoDetailResponse = {
   startTime?: string | null;
   endTime?: string | null;
 };
+
+export type PropertyType =
+  | "RESIDENTIAL"
+  | "COMMERCIAL"
+  | "INDUSTRIAL"
+  | "AGRICULTURE"
+  | "PLOT";
+
+export type CreatePropertyRequest = {
+  title: string;
+  location: string;
+  valuation: number;
+  tokenSupply: number;
+  tokenPrice: number;
+  listingBroker?: string;
+  promoterBroker?: string;
+  propertyType?: PropertyType;
+  photos?: string[];
+  documents?: string[];
+};
+
+export type UpdatePropertyRequest = Partial<CreatePropertyRequest> & {
+  status?: PropertyStatus;
+};
+
+export type CreateIpoRequest = {
+  propertyId: string;
+  tokenPrice: number;
+  totalTokens: number;
+  minSubscription: number;
+  startTime: string;
+  endTime: string;
+};
+
+export type CreateIpoResponse = {
+  propertyId: string;
+  ipoId: string;
+  status: IpoStatus;
+};
+
+export type IpoStatusResponse = {
+  ipoId: string;
+  status: IpoStatus;
+};
+
+export type MintResponse = {
+  ipoId: string;
+  status: IpoStatus;
+  totalTokens: number | null;
+  allottedSubscribers: number | null;
+  refundedSubscribers: number | null;
+};
+
+export type ModifyOrderRequest = {
+  quantity: number;
+  price?: number;
+};
+
+export type TradeResponse = {
+  tradeId: string;
+  propertyId: string;
+  quantity: number | null;
+  price: number | null;
+  amount: number | null;
+  side: OrderSide;
+  counterOrderId?: string | null;
+  createdAt?: string | null;
+};
+
+export type KycStatusResponse = {
+  kycStatus?: string;
+  verificationStatus?: string;
+  maskedPan?: string;
+  kycType?: string;
+  provider?: string;
+  reason?: string;
+  verifiedAt?: string;
+};
+
+export type PatchProfileRequest = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+};
+
+export type TemplateRequest = {
+  templateName: string;
+  templateString: string;
+};
+
+export type TemplateResponse = {
+  templateId: string;
+};
+
+export type SendNotificationRequest = {
+  templateName: string;
+  parameters?: Record<string, string>;
+  identityType: "PHONE_NUMBER" | "EMAIL";
+  identityValue: string;
+};
+
+export type SendNotificationResponse = {
+  requestId: string;
+  status: "PENDING" | "SUCCESS" | "FAILED";
+};

@@ -23,8 +23,7 @@ export function OrdersContent({
         <div className="grid grid-cols-4 gap-4">
           <div className="flex flex-col gap-2 bg-surface-container p-4 md:col-span-4">
             <p className="text-[10px] text-on-surface-variant">
-              Filters are not wired yet. The table below shows live data from GET
-              /orders/all.
+              Cancel sends PATCH /orders/{"{orderId}"} with quantity 0. Trades load from GET /orders/{"{orderId}"}/trades.
             </p>
           </div>
         </div>

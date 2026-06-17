@@ -1,16 +1,28 @@
-import { IpoContent } from "@/components/ipo/ipo-content";
+import { IpoContent } from "@/features/ipo";
 import { getErrorMessage } from "@/lib/api/errors";
-import { mapIpoToRow } from "@/lib/mappers/ipo";
-import { listIpos } from "@/lib/services/backend";
+import { listIpos, listProperties } from "@/lib/services/backend";
 
 export default async function IpoPage() {
   try {
-    const ipos = await listIpos();
-    return <IpoContent ipos={ipos.map(mapIpoToRow)} />;
+    const [ipos, properties] = await Promise.all([
+      listIpos(),
+      listProperties()
+    ]);
+    const approvedProperties = properties.filter(
+      (property) => property.status === "APPROVED",
+    );
+
+    return (
+      <IpoContent
+        initialIpos={ipos}
+        approvedProperties={approvedProperties}
+      />
+    );
   } catch (error) {
     return (
       <IpoContent
-        ipos={[]}
+        initialIpos={[]}
+        approvedProperties={[]}
         error={getErrorMessage(error, "Could not load IPOs from the backend.")}
       />
     );
