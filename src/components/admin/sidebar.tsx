@@ -17,7 +17,7 @@ export function Sidebar() {
     <aside className="flex w-64 shrink-0 flex-col border-r border-outline-variant/10 bg-surface-container-low">
       <div className="flex items-center gap-3 p-6">
         <div className="flex h-10 w-10 items-center justify-center rounded bg-primary-container">
-          <Icon name="token" className="text-on-primary-fixed" filled />
+          <Icon name="token" className="text-[22px] text-on-primary-fixed" filled />
         </div>
         <div>
           <p className="font-headline text-lg font-bold leading-tight text-on-surface">
