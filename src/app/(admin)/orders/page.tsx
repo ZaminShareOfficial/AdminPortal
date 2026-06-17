@@ -1,27 +1,15 @@
-import { OrdersContent } from "@/components/orders/orders-content";
-import { getErrorMessage } from "@/lib/api/errors";
-import { mapOpenOrderToRow, mapOrderToFeedItem } from "@/lib/mappers/order";
-import { listOpenOrders } from "@/lib/services/backend";
+import { OrdersContent } from "@/features/orders";
+import { loadOrdersPageData } from "@/features/orders/hooks";
 
 export default async function OrdersPage() {
-  try {
-    const openOrders = await listOpenOrders();
+  const { orders, feed, openOrderCount, error } = await loadOrdersPageData();
 
-    return (
-      <OrdersContent
-        orders={openOrders.map(mapOpenOrderToRow)}
-        feed={openOrders.slice(0, 8).map(mapOrderToFeedItem)}
-        openOrderCount={openOrders.length}
-      />
-    );
-  } catch (error) {
-    return (
-      <OrdersContent
-        orders={[]}
-        feed={[]}
-        openOrderCount={0}
-        error={getErrorMessage(error, "Could not load orders from the backend.")}
-      />
-    );
-  }
+  return (
+    <OrdersContent
+      orders={orders}
+      feed={feed}
+      openOrderCount={openOrderCount}
+      error={error}
+    />
+  );
 }
