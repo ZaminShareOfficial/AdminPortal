@@ -1,8 +1,9 @@
 "use client";
 
-import { useOverlayState } from "@heroui/react";
+import { Button, useOverlayState } from "@heroui/react";
 import { useState } from "react";
 import { Icon } from "@/components/admin/icon";
+import { CancelOrderModal } from "@/features/orders/components/cancel-order-modal";
 import { OrderTradesModal } from "@/features/orders/components/order-trades-modal";
 import type { SurveillanceOrderRow } from "@/features/orders/types";
 import { useOrderActions } from "@/features/orders/use-order-actions";
@@ -13,12 +14,18 @@ type OrdersTableProps = {
 
 export function OrdersTable({ orders }: OrdersTableProps) {
   const tradesModal = useOverlayState();
+  const cancelDialog = useOverlayState();
   const [activeOrder, setActiveOrder] = useState<SurveillanceOrderRow | null>(
     null,
   );
+  const [orderToCancel, setOrderToCancel] = useState<SurveillanceOrderRow | null>(
+    null,
+  );
   const {
-    actionError,
-    isPending,
+    cancelError,
+    tradesError,
+    isCancelling,
+    isLoadingTrades,
     trades,
     submitCancel,
     loadTrades,
@@ -32,11 +39,20 @@ export function OrdersTable({ orders }: OrdersTableProps) {
     tradesModal.open();
   };
 
+  const confirmCancel = () => {
+    if (!orderToCancel) {
+      return;
+    }
+    submitCancel(orderToCancel.orderId);
+    cancelDialog.close();
+    setOrderToCancel(null);
+  };
+
   return (
     <>
-      {actionError ? (
+      {cancelError ? (
         <p className="mb-4 text-sm text-error" role="alert">
-          {actionError}
+          {cancelError}
         </p>
       ) : null}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm bg-surface-container">
@@ -103,25 +119,28 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                     <td className="px-6 py-4">{order.status}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <button
-                          type="button"
+                        <Button
+                          isIconOnly
+                          variant="ghost"
                           aria-label="Cancel order"
-                          disabled={isPending}
-                          onClick={() => submitCancel(order.orderId)}
-                          className="p-1 transition-colors hover:text-error"
+                          isDisabled={isCancelling}
+                          onPress={() => {
+                            setOrderToCancel(order);
+                            cancelDialog.open();
+                          }}
                           data-testid={`cancel-order-${order.orderId}`}
                         >
-                          <Icon name="cancel" className="text-base" />
-                        </button>
-                        <button
-                          type="button"
+                          <Icon name="cancel" className="text-base text-error" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          variant="ghost"
                           aria-label="View trades"
-                          onClick={() => openTrades(order)}
-                          className="p-1 transition-colors hover:text-tertiary"
+                          onPress={() => openTrades(order)}
                           data-testid={`view-trades-${order.orderId}`}
                         >
-                          <Icon name="history" className="text-base" />
-                        </button>
+                          <Icon name="history" className="text-base text-tertiary" />
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -131,14 +150,27 @@ export function OrdersTable({ orders }: OrdersTableProps) {
           </table>
         </div>
       </div>
-      <OrderTradesModal
-        isOpen={tradesModal.isOpen}
-        onOpenChange={tradesModal.setOpen}
-        orderLabel={activeOrder?.orderId ?? ""}
-        trades={trades}
-        isLoading={isPending && trades.length === 0}
-        error={actionError}
-      />
+
+      {tradesModal.isOpen ? (
+        <OrderTradesModal
+          isOpen={tradesModal.isOpen}
+          onOpenChange={tradesModal.setOpen}
+          orderLabel={activeOrder?.orderId ?? ""}
+          trades={trades}
+          isLoading={isLoadingTrades}
+          error={tradesError}
+        />
+      ) : null}
+
+      {cancelDialog.isOpen ? (
+        <CancelOrderModal
+          isOpen={cancelDialog.isOpen}
+          onOpenChange={cancelDialog.setOpen}
+          orderId={orderToCancel?.orderId ?? null}
+          isCancelling={isCancelling}
+          onConfirm={confirmCancel}
+        />
+      ) : null}
     </>
   );
 }

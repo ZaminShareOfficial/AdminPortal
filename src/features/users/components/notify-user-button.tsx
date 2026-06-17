@@ -9,18 +9,20 @@ import {
 } from "@heroui/react";
 import { useOverlayState } from "@heroui/react";
 import { useState } from "react";
-import { sendNotification } from "@/features/settings/services/settings-client";
+import { sendNotification } from "@/features/settings/services/SettingsApiService";
 
 type NotifyUserModalProps = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   userName: string;
+  userId: string;
 };
 
 const NotifyUserModal = ({
   isOpen,
   onOpenChange,
-  userName
+  userName,
+  userId
 }: NotifyUserModalProps) => {
   const [templateName, setTemplateName] = useState("user_alert");
   const [identityValue, setIdentityValue] = useState("");
@@ -35,7 +37,7 @@ const NotifyUserModal = ({
         templateName,
         identityType: "PHONE_NUMBER",
         identityValue: identityValue.trim(),
-        parameters: { userName }
+        parameters: { userName, userId }
       });
       onOpenChange(false);
       setIdentityValue("");
@@ -62,6 +64,7 @@ const NotifyUserModal = ({
               <p className="text-xs text-on-surface-variant">
                 POST /internal/admin/notification/send
               </p>
+              <p className="text-xs text-on-surface-variant">User ID: {userId}</p>
               <TextField
                 name="templateName"
                 value={templateName}
@@ -104,7 +107,15 @@ const NotifyUserModal = ({
   );
 };
 
-export const NotifyUserButton = ({ userName }: { userName: string }) => {
+type NotifyUserButtonProps = {
+  userName: string;
+  userId: string;
+};
+
+export const NotifyUserButton = ({
+  userName,
+  userId
+}: NotifyUserButtonProps) => {
   const modalState = useOverlayState();
 
   return (
@@ -113,15 +124,18 @@ export const NotifyUserButton = ({ userName }: { userName: string }) => {
         variant="secondary"
         size="sm"
         onPress={modalState.open}
-        data-testid={`notify-user-${userName}`}
+        data-testid={`notify-user-${userId}`}
       >
         Notify
       </Button>
-      <NotifyUserModal
-        isOpen={modalState.isOpen}
-        onOpenChange={modalState.setOpen}
-        userName={userName}
-      />
+      {modalState.isOpen ? (
+        <NotifyUserModal
+          isOpen={modalState.isOpen}
+          onOpenChange={modalState.setOpen}
+          userName={userName}
+          userId={userId}
+        />
+      ) : null}
     </>
   );
 };

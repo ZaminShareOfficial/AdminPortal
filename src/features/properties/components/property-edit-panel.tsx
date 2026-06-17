@@ -6,47 +6,32 @@ import {
   Label,
   TextField
 } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { EnumSelect } from "@/components/admin/enum-select";
 import { Icon } from "@/components/admin/icon";
 import {
-  PROPERTY_STATUS_OPTIONS,
-  PROPERTY_TYPES
+  PROPERTY_STATUS_SELECT_OPTIONS,
+  PROPERTY_TYPE_SELECT_OPTIONS
 } from "@/constants/property";
-import {
-  propertyToForm,
-  usePropertyActions
-} from "@/features/properties/hooks";
+import type { PropertyActions } from "@/features/properties/hooks";
+import { propertyToForm } from "@/features/properties/mappers";
 import type { PropertyFormValues } from "@/features/properties/types";
 import type { PropertyResponse } from "@/types/backend";
 import { getPropertyStatusClass, mapPropertyStatus } from "@/lib/mappers/property";
 
-type PropertyEditPanelProps = {
-  property: PropertyResponse | null;
+type PropertyEditFormProps = {
+  property: PropertyResponse;
+  propertyActions: PropertyActions;
 };
 
-export const PropertyEditPanel = ({ property }: PropertyEditPanelProps) => {
-  const [form, setForm] = useState<PropertyFormValues | null>(null);
-  const { actionError, isPending, submitUpdate } = usePropertyActions();
-
-  // useEffect justified: sync — load form state when the selected property changes
-  useEffect(() => {
-    if (!property) {
-      setForm(null);
-      return;
-    }
-
-    setForm(propertyToForm(property));
-  }, [property?.id]);
-
-  if (!property || !form) {
-    return (
-      <p className="text-sm text-on-surface-variant">
-        Select a property from the list to view and edit live backend data.
-      </p>
-    );
-  }
-
+const PropertyEditForm = ({
+  property,
+  propertyActions
+}: PropertyEditFormProps) => {
+  const [form, setForm] = useState<PropertyFormValues>(() =>
+    propertyToForm(property),
+  );
+  const { actionError, isPending, submitUpdate } = propertyActions;
   const statusLabel = mapPropertyStatus(property.status);
 
   return (
@@ -118,10 +103,7 @@ export const PropertyEditPanel = ({ property }: PropertyEditPanelProps) => {
       <EnumSelect
         label="Property type"
         value={form.propertyType}
-        options={PROPERTY_TYPES.map((type) => ({
-          id: type.value,
-          label: type.label
-        }))}
+        options={PROPERTY_TYPE_SELECT_OPTIONS}
         onChange={(propertyType) => setForm({ ...form, propertyType })}
         testId="edit-property-type"
       />
@@ -129,10 +111,7 @@ export const PropertyEditPanel = ({ property }: PropertyEditPanelProps) => {
       <EnumSelect
         label="Status"
         value={form.status}
-        options={PROPERTY_STATUS_OPTIONS.map((status) => ({
-          id: status.value,
-          label: status.label
-        }))}
+        options={PROPERTY_STATUS_SELECT_OPTIONS}
         onChange={(status) => setForm({ ...form, status })}
         testId="edit-property-status"
       />
@@ -165,5 +144,31 @@ export const PropertyEditPanel = ({ property }: PropertyEditPanelProps) => {
         {isPending ? "Saving..." : "Save changes"}
       </Button>
     </div>
+  );
+};
+
+type PropertyEditPanelProps = {
+  property: PropertyResponse | null;
+  propertyActions: PropertyActions;
+};
+
+export const PropertyEditPanel = ({
+  property,
+  propertyActions
+}: PropertyEditPanelProps) => {
+  if (!property) {
+    return (
+      <p className="text-sm text-on-surface-variant">
+        Select a property from the list to view and edit live backend data.
+      </p>
+    );
+  }
+
+  return (
+    <PropertyEditForm
+      key={`${property.id}:${property.valuation}:${property.status}:${property.title}`}
+      property={property}
+      propertyActions={propertyActions}
+    />
   );
 };

@@ -7,20 +7,17 @@ import {
   Modal,
   TextField
 } from "@heroui/react";
-import { useOverlayState } from "@heroui/react";
 import { useState } from "react";
 import { EnumSelect } from "@/components/admin/enum-select";
-import { Icon } from "@/components/admin/icon";
-import { PROPERTY_TYPES } from "@/constants/property";
-import {
-  emptyPropertyForm,
-  usePropertyActions
-} from "@/features/properties/hooks";
+import { PROPERTY_TYPE_SELECT_OPTIONS } from "@/constants/property";
+import { emptyPropertyForm } from "@/features/properties/mappers";
+import type { PropertyActions } from "@/features/properties/hooks";
 import type { PropertyFormValues } from "@/features/properties/types";
 
 type CreatePropertyModalProps = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  propertyActions: PropertyActions;
 };
 
 const PropertyFormFields = ({
@@ -99,10 +96,7 @@ const PropertyFormFields = ({
     <EnumSelect
       label="Property type"
       value={form.propertyType}
-      options={PROPERTY_TYPES.map((type) => ({
-        id: type.value,
-        label: type.label
-      }))}
+      options={PROPERTY_TYPE_SELECT_OPTIONS}
       onChange={(propertyType) => onChange({ ...form, propertyType })}
       testId="property-type-select"
     />
@@ -111,11 +105,12 @@ const PropertyFormFields = ({
 
 export const CreatePropertyModal = ({
   isOpen,
-  onOpenChange
+  onOpenChange,
+  propertyActions
 }: CreatePropertyModalProps) => {
   const [form, setForm] = useState<PropertyFormValues>(emptyPropertyForm);
   const { actionError, isPending, submitCreate, clearActionError } =
-    usePropertyActions();
+    propertyActions;
 
   const handleClose = () => {
     clearActionError();
@@ -126,10 +121,6 @@ export const CreatePropertyModal = ({
   const handleSubmit = () => {
     submitCreate(form, handleClose);
   };
-
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -164,27 +155,5 @@ export const CreatePropertyModal = ({
         </Modal.Container>
       </Modal.Backdrop>
     </Modal>
-  );
-};
-
-export const CreatePropertyTrigger = () => {
-  const modalState = useOverlayState();
-
-  return (
-    <>
-      <Button
-        variant="primary"
-        className="saffron-gradient text-xs font-bold uppercase tracking-widest text-on-primary-fixed"
-        onPress={modalState.open}
-        data-testid="open-create-property"
-      >
-        <Icon name="add" className="text-lg" />
-        Create Property
-      </Button>
-      <CreatePropertyModal
-        isOpen={modalState.isOpen}
-        onOpenChange={modalState.setOpen}
-      />
-    </>
   );
 };

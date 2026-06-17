@@ -2,18 +2,31 @@
 
 import { Button } from "@heroui/react";
 import { Icon } from "@/components/admin/icon";
-import { useIpoActions } from "@/features/ipo/hooks";
-import type { IpoViewRow } from "@/features/ipo/types";
+import type { IpoActions } from "@/features/ipo/hooks";
+import type { IpoStatus } from "@/types/backend";
 
 type IpoInspectorPanelProps = {
-  selectedIpo: IpoViewRow | null;
+  ipoId: string | null;
+  name: string | null;
+  displayId: string | null;
+  supply: string | null;
+  price: string | null;
+  rawStatus: IpoStatus | null;
+  ipoActions: IpoActions;
 };
 
-export const IpoInspectorPanel = ({ selectedIpo }: IpoInspectorPanelProps) => {
-  const { actionError, isPending, pauseIpo, resumeIpo, submitMint } =
-    useIpoActions();
+export const IpoInspectorPanel = ({
+  ipoId,
+  name,
+  displayId,
+  supply,
+  price,
+  rawStatus,
+  ipoActions
+}: IpoInspectorPanelProps) => {
+  const { actionError, isPending, pauseIpo, resumeIpo, submitMint } = ipoActions;
 
-  if (!selectedIpo) {
+  if (!ipoId || !name || !rawStatus) {
     return (
       <p className="text-sm text-on-surface-variant">
         Select an IPO from the list to manage status and minting.
@@ -21,17 +34,15 @@ export const IpoInspectorPanel = ({ selectedIpo }: IpoInspectorPanelProps) => {
     );
   }
 
-  const canPause = selectedIpo.rawStatus === "CREATED";
-  const canResume = selectedIpo.rawStatus === "PAUSED";
-  const canMint =
-    selectedIpo.rawStatus === "CREATED" ||
-    selectedIpo.rawStatus === "PAUSED";
+  const canPause = rawStatus === "CREATED";
+  const canResume = rawStatus === "PAUSED";
+  const canMint = rawStatus === "CREATED" || rawStatus === "PAUSED";
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="font-headline text-xl font-bold">{selectedIpo.name}</h3>
-        <p className="mt-1 text-xs text-on-surface-variant">{selectedIpo.id}</p>
+        <h3 className="font-headline text-xl font-bold">{name}</h3>
+        <p className="mt-1 text-xs text-on-surface-variant">{displayId}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -40,7 +51,7 @@ export const IpoInspectorPanel = ({ selectedIpo }: IpoInspectorPanelProps) => {
             Token supply
           </p>
           <p className="font-headline text-lg font-bold text-secondary">
-            {selectedIpo.supply}
+            {supply}
           </p>
         </div>
         <div className="rounded bg-surface-container-low p-3">
@@ -48,7 +59,7 @@ export const IpoInspectorPanel = ({ selectedIpo }: IpoInspectorPanelProps) => {
             Token price
           </p>
           <p className="font-headline text-lg font-bold text-tertiary">
-            {selectedIpo.price}
+            {price}
           </p>
         </div>
       </div>
@@ -65,7 +76,7 @@ export const IpoInspectorPanel = ({ selectedIpo }: IpoInspectorPanelProps) => {
             variant="secondary"
             className="w-full"
             isDisabled={isPending}
-            onPress={() => pauseIpo(selectedIpo.ipoId)}
+            onPress={() => pauseIpo(ipoId)}
             data-testid="ipo-pause-button"
           >
             <Icon name="pause_circle" className="text-primary" />
@@ -77,7 +88,7 @@ export const IpoInspectorPanel = ({ selectedIpo }: IpoInspectorPanelProps) => {
             variant="secondary"
             className="w-full"
             isDisabled={isPending}
-            onPress={() => resumeIpo(selectedIpo.ipoId)}
+            onPress={() => resumeIpo(ipoId)}
             data-testid="ipo-resume-button"
           >
             <Icon name="play_circle" className="text-primary" />
@@ -88,15 +99,12 @@ export const IpoInspectorPanel = ({ selectedIpo }: IpoInspectorPanelProps) => {
           variant="primary"
           className="w-full"
           isDisabled={isPending || !canMint}
-          onPress={() => submitMint(selectedIpo.ipoId)}
+          onPress={() => submitMint(ipoId)}
           data-testid="ipo-mint-button"
         >
           <Icon name="bolt" />
           {isPending ? "Minting..." : "Mint IPO"}
         </Button>
-        <p className="text-center text-[10px] text-on-surface-variant">
-          PATCH /admin/ipos/{"{ipoId}"}/status · POST /admin/ipos/{"{ipoId}"}/mint
-        </p>
       </div>
     </div>
   );

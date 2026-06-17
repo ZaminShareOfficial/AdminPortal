@@ -1,11 +1,13 @@
 "use client";
 
 import axios, { type AxiosRequestConfig } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ADMIN_API_BASE_URL } from "@/lib/api/admin-api";
 import { ApiError } from "@/lib/api/errors";
 
 type UseAxiosOptions = Omit<AxiosRequestConfig, "url"> & {
   autoFetch?: boolean;
+  apiScope?: "v1" | "admin";
 };
 
 type UseAxiosResult<T> = {
@@ -17,11 +19,18 @@ type UseAxiosResult<T> = {
   ) => Promise<T | null>;
 };
 
-const apiClient = axios.create({
+const v1Client = axios.create({
   baseURL: "/api/v1",
   headers: {
-    "Content-Type": "application/json",
-  },
+    "Content-Type": "application/json"
+  }
+});
+
+const adminClient = axios.create({
+  baseURL: ADMIN_API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json"
+  }
 });
 
 function toApiError(error: unknown): string {
@@ -52,6 +61,7 @@ export const useAxios = <T>(
 ): UseAxiosResult<T> => {
   const {
     autoFetch = false,
+    apiScope = "v1",
     method = "GET",
     data: body,
     headers,
@@ -62,44 +72,44 @@ export const useAxios = <T>(
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const client = apiScope === "admin" ? adminClient : v1Client;
 
-  const startFetch = useCallback(
-    async (override: Partial<AxiosRequestConfig> = {}): Promise<T | null> => {
-      abortControllerRef.current?.abort();
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
+  const startFetch = async (
+    override: Partial<AxiosRequestConfig> = {},
+  ): Promise<T | null> => {
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
-      setIsLoading(true);
-      setError(null);
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        const response = await apiClient.request<T>({
-          url,
-          method,
-          data: body,
-          headers,
-          params,
-          signal: controller.signal,
-          ...rest,
-          ...override,
-        });
-        setData(response.data);
-        return response.data;
-      } catch (requestError) {
-        if (axios.isCancel(requestError)) {
-          return null;
-        }
-        const message = toApiError(requestError);
-        setError(message);
+    try {
+      const response = await client.request<T>({
+        url,
+        method,
+        data: body,
+        headers,
+        params,
+        signal: controller.signal,
+        ...rest,
+        ...override
+      });
+      setData(response.data);
+      return response.data;
+    } catch (requestError) {
+      if (axios.isCancel(requestError)) {
         return null;
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
       }
-    },
-    [body, headers, method, params, rest, url],
-  );
+      const message = toApiError(requestError);
+      setError(message);
+      return null;
+    } finally {
+      if (!controller.signal.aborted) {
+        setIsLoading(false);
+      }
+    }
+  };
 
   // useEffect justified: fetch-on-mount — autoFetch triggers initial data load when hook mounts
   useEffect(() => {
@@ -107,7 +117,8 @@ export const useAxios = <T>(
       return;
     }
     void startFetch();
-  }, [autoFetch, startFetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoFetch, url, apiScope, method]);
 
   // useEffect justified: cleanup — cancel in-flight request when component unmounts
   useEffect(() => {
@@ -120,6 +131,6 @@ export const useAxios = <T>(
     data,
     error,
     isLoading,
-    startFetch,
+    startFetch
   };
 };

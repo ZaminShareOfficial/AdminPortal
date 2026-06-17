@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { IpoViewRow } from "@/features/ipo/types";
+import { getRowActivationProps } from "@/lib/a11y";
 
 const placeholderImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCu1lg4swJwDIAlT-bJscsUntDuZgsX4bx-xwlAP87m1nYpEiXjOlk3SHwdhtfG71K9s8zDXsE-6oi4LmiJt6wwRIMJZjYP-f5ZjAEOALLKA4ysoWI3HVbBgguLrkJc86iZ3Utaw7Gj0qRtNpbNWgqWA44_Yl_SviHd2Bngw1W7cALociJLNDYPUyE365lIc5YLUHxqXXIcJWktcTmStfDcTbMjeDh47Nz6qu7Zt_vyfNJ3EzY-_e2x-yvALF6RSk1qTp54fHjYFm8J";
@@ -44,7 +45,7 @@ export const IpoTable = ({ ipos, selectedId, onSelect }: IpoTableProps) => (
           ipos.map((ipo) => (
             <tr
               key={ipo.ipoId}
-              onClick={() => onSelect(ipo.ipoId)}
+              {...getRowActivationProps(() => onSelect(ipo.ipoId))}
               className={`cursor-pointer transition-colors hover:bg-surface-container-high ${
                 selectedId === ipo.ipoId ? "bg-surface-container-low" : ""
               } ${ipo.highlighted ? "bg-surface-container-low/30" : ""}`}

@@ -1,3 +1,4 @@
+import type { EnumSelectOption } from "@/components/admin/enum-select";
 import type { PropertyType } from "@/types/backend";
 
 export const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
@@ -16,3 +17,16 @@ export const PROPERTY_STATUS_OPTIONS = [
   { value: "IPO_CLOSED", label: "IPO Closed" },
   { value: "TRADING", label: "Trading" }
 ] as const;
+
+export const PROPERTY_TYPE_SELECT_OPTIONS: EnumSelectOption[] = PROPERTY_TYPES.map(
+  (type) => ({
+    id: type.value,
+    label: type.label
+  })
+);
+
+export const PROPERTY_STATUS_SELECT_OPTIONS: EnumSelectOption[] =
+  PROPERTY_STATUS_OPTIONS.map((status) => ({
+    id: status.value,
+    label: status.label
+  }));

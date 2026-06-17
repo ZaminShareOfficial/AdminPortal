@@ -14,6 +14,19 @@ type AdminHandlerOptions = {
   hasBody?: boolean;
 };
 
+async function readJsonBody(request: Request) {
+  const text = await request.text();
+  if (!text.trim()) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    throw new ApiError(400, "Request body must be valid JSON.");
+  }
+}
+
 export function createAdminRouteHandler<T>({
   method,
   resolvePath,
@@ -29,7 +42,10 @@ export function createAdminRouteHandler<T>({
       const options: RequestInit = { method };
 
       if (hasBody) {
-        options.body = JSON.stringify(await request.json());
+        const body = await readJsonBody(request);
+        if (body !== undefined) {
+          options.body = JSON.stringify(body);
+        }
       }
 
       const data = await apiFetch<T>(path, options);

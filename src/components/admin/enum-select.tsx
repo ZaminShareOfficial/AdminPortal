@@ -6,6 +6,7 @@ import {
   ListBoxItem,
   Select
 } from "@heroui/react";
+import { useMemo } from "react";
 
 export type EnumSelectOption = {
   id: string;
@@ -20,39 +21,50 @@ type EnumSelectProps = {
   testId?: string;
 };
 
+const getOptionsSignature = (options: readonly EnumSelectOption[]) =>
+  options.map((option) => `${option.id}:${option.label}`).join("|");
+
 export const EnumSelect = ({
   label,
   value,
   options,
   onChange,
   testId
-}: EnumSelectProps) => (
-  <Select
-    selectedKey={value}
-    onSelectionChange={(key) => {
-      if (key == null) {
-        return;
-      }
+}: EnumSelectProps) => {
+  const optionsSignature = getOptionsSignature(options);
+  const items = useMemo(
+    () => options.map((option) => ({ id: option.id, label: option.label })),
+    [optionsSignature]
+  );
 
-      const next = String(key);
-      if (next !== value) {
-        onChange(next);
-      }
-    }}
-  >
-    <Label>{label}</Label>
-    <Select.Trigger data-testid={testId}>
-      <Select.Value />
-      <Select.Indicator />
-    </Select.Trigger>
-    <Select.Popover>
-      <ListBox items={options}>
-        {(item) => (
-          <ListBoxItem id={item.id} textValue={item.label}>
-            {item.label}
-          </ListBoxItem>
-        )}
-      </ListBox>
-    </Select.Popover>
-  </Select>
-);
+  return (
+    <Select
+      selectedKey={value}
+      onSelectionChange={(key) => {
+        if (key == null) {
+          return;
+        }
+
+        const next = String(key);
+        if (next !== value) {
+          onChange(next);
+        }
+      }}
+    >
+      <Label>{label}</Label>
+      <Select.Trigger data-testid={testId}>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox items={items}>
+          {(item) => (
+            <ListBoxItem id={item.id} textValue={item.label}>
+              {item.label}
+            </ListBoxItem>
+          )}
+        </ListBox>
+      </Select.Popover>
+    </Select>
+  );
+};

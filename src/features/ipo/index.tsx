@@ -1,11 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Button } from "@heroui/react";
+import { useOverlayState } from "@heroui/react";
 import { ApiErrorBanner } from "@/components/admin/api-error-banner";
 import { Icon } from "@/components/admin/icon";
-import { CreateIpoTrigger } from "@/features/ipo/components/create-ipo-modal";
+import { CreateIpoModal } from "@/features/ipo/components/create-ipo-modal";
 import { IpoInspectorPanel } from "@/features/ipo/components/ipo-inspector-panel";
 import { IpoTable } from "@/features/ipo/components/ipo-table";
+import { useIpoActions } from "@/features/ipo/hooks";
 import type { IpoContentProps } from "@/features/ipo/types";
 import { mapIpoToRow } from "@/lib/mappers/ipo";
 
@@ -17,6 +20,8 @@ export function IpoContent({
   const [selectedId, setSelectedId] = useState<string | null>(
     initialIpos[0]?.ipoId ?? null,
   );
+  const ipoActions = useIpoActions();
+  const createModal = useOverlayState();
 
   const ipos = useMemo(
     () =>
@@ -76,7 +81,15 @@ export function IpoContent({
             Institutional Offering Control Center
           </p>
         </div>
-        <CreateIpoTrigger approvedProperties={approvedProperties} />
+        <Button
+          variant="primary"
+          className="saffron-gradient text-sm font-bold text-on-primary-fixed"
+          onPress={createModal.open}
+          data-testid="open-create-ipo"
+        >
+          <Icon name="rocket_launch" filled className="text-primary" />
+          Launch New IPO
+        </Button>
       </div>
 
       {error ? <ApiErrorBanner message={error} /> : null}
@@ -87,7 +100,15 @@ export function IpoContent({
         </div>
         <div className="col-span-12 lg:col-span-4">
           <div className="rounded-lg border border-outline-variant/10 bg-surface-container p-6">
-            <IpoInspectorPanel selectedIpo={selectedIpo} />
+            <IpoInspectorPanel
+              ipoId={selectedIpo?.ipoId ?? null}
+              name={selectedIpo?.name ?? null}
+              displayId={selectedIpo?.id ?? null}
+              supply={selectedIpo?.supply ?? null}
+              price={selectedIpo?.price ?? null}
+              rawStatus={selectedIpo?.rawStatus ?? null}
+              ipoActions={ipoActions}
+            />
           </div>
         </div>
       </div>
@@ -111,6 +132,15 @@ export function IpoContent({
           </div>
         ))}
       </div>
+
+      {createModal.isOpen ? (
+        <CreateIpoModal
+          isOpen={createModal.isOpen}
+          onOpenChange={createModal.setOpen}
+          approvedProperties={approvedProperties}
+          ipoActions={ipoActions}
+        />
+      ) : null}
     </div>
   );
 }

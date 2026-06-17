@@ -104,7 +104,7 @@ export function UsersContent({
                       {user.portfolio}
                     </td>
                     <td className="px-8 py-4 text-right">
-                      <NotifyUserButton userName={user.name} />
+                      <NotifyUserButton userName={user.name} userId={user.id} />
                     </td>
                   </tr>
                 ))

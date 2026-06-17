@@ -7,11 +7,10 @@ import {
   Modal,
   TextField
 } from "@heroui/react";
-import { useOverlayState } from "@heroui/react";
 import { useMemo, useState } from "react";
 import { EnumSelect } from "@/components/admin/enum-select";
-import { Icon } from "@/components/admin/icon";
-import { emptyIpoForm, useIpoActions } from "@/features/ipo/hooks";
+import type { IpoActions } from "@/features/ipo/hooks";
+import { emptyIpoForm } from "@/features/ipo/hooks";
 import type { IpoFormValues } from "@/features/ipo/types";
 import type { PropertyResponse } from "@/types/backend";
 
@@ -19,16 +18,17 @@ type CreateIpoModalProps = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   approvedProperties: PropertyResponse[];
+  ipoActions: IpoActions;
 };
 
 export const CreateIpoModal = ({
   isOpen,
   onOpenChange,
-  approvedProperties
+  approvedProperties,
+  ipoActions
 }: CreateIpoModalProps) => {
   const [form, setForm] = useState<IpoFormValues>(emptyIpoForm);
-  const { actionError, isPending, submitCreate, clearActionError } =
-    useIpoActions();
+  const { actionError, isPending, submitCreate, clearActionError } = ipoActions;
 
   const propertyOptions = useMemo(
     () =>
@@ -44,10 +44,6 @@ export const CreateIpoModal = ({
     setForm(emptyIpoForm());
     onOpenChange(false);
   };
-
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -134,32 +130,5 @@ export const CreateIpoModal = ({
         </Modal.Container>
       </Modal.Backdrop>
     </Modal>
-  );
-};
-
-export const CreateIpoTrigger = ({
-  approvedProperties
-}: {
-  approvedProperties: PropertyResponse[];
-}) => {
-  const modalState = useOverlayState();
-
-  return (
-    <>
-      <Button
-        variant="primary"
-        className="saffron-gradient text-sm font-bold text-on-primary-fixed"
-        onPress={modalState.open}
-        data-testid="open-create-ipo"
-      >
-        <Icon name="rocket_launch" filled className="text-primary" />
-        Launch New IPO
-      </Button>
-      <CreateIpoModal
-        isOpen={modalState.isOpen}
-        onOpenChange={modalState.setOpen}
-        approvedProperties={approvedProperties}
-      />
-    </>
   );
 };

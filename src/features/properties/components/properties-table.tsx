@@ -1,5 +1,6 @@
 "use client";
 
+import { getRowActivationProps } from "@/lib/a11y";
 import type { PropertyRow } from "@/lib/mappers/property";
 import { getPropertyStatusClass } from "@/lib/mappers/property";
 
@@ -56,7 +57,7 @@ export const PropertiesTable = ({
           properties.map((property) => (
             <tr
               key={property.id}
-              onClick={() => onSelect(property.id)}
+              {...getRowActivationProps(() => onSelect(property.id))}
               className={`group cursor-pointer transition-colors hover:bg-surface-container-high ${
                 selectedId === property.id
                   ? "border-l-2 border-primary bg-surface-container-low"

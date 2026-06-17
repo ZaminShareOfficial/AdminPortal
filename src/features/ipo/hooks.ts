@@ -7,7 +7,7 @@ import {
   createIpo,
   mintIpo,
   updateIpoStatus
-} from "@/features/ipo/services/ipo-client";
+} from "@/features/ipo/services/IpoApiService";
 import type { IpoFormValues } from "@/features/ipo/types";
 
 export const emptyIpoForm = (): IpoFormValues => ({
@@ -53,78 +53,62 @@ export const useIpoActions = () => {
   const [actionError, setActionError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const refresh = useCallback(() => {
-    router.refresh();
-  }, [router]);
+  const submitCreate = (form: IpoFormValues, onSuccess: () => void) => {
+    setActionError(null);
+    startTransition(async () => {
+      try {
+        await createIpo(toCreatePayload(form));
+        onSuccess();
+        router.refresh();
+      } catch (error) {
+        setActionError(
+          error instanceof Error ? error.message : "Could not create IPO.",
+        );
+      }
+    });
+  };
 
-  const submitCreate = useCallback(
-    (form: IpoFormValues, onSuccess: () => void) => {
-      setActionError(null);
-      startTransition(async () => {
-        try {
-          await createIpo(toCreatePayload(form));
-          onSuccess();
-          refresh();
-        } catch (error) {
-          setActionError(
-            error instanceof Error ? error.message : "Could not create IPO.",
-          );
-        }
-      });
-    },
-    [refresh],
-  );
+  const pauseIpo = (ipoId: string) => {
+    setActionError(null);
+    startTransition(async () => {
+      try {
+        await updateIpoStatus(ipoId, "PAUSED");
+        router.refresh();
+      } catch (error) {
+        setActionError(
+          error instanceof Error ? error.message : "Could not pause IPO.",
+        );
+      }
+    });
+  };
 
-  const pauseIpo = useCallback(
-    (ipoId: string) => {
-      setActionError(null);
-      startTransition(async () => {
-        try {
-          await updateIpoStatus(ipoId, "PAUSED");
-          refresh();
-        } catch (error) {
-          setActionError(
-            error instanceof Error ? error.message : "Could not pause IPO.",
-          );
-        }
-      });
-    },
-    [refresh],
-  );
+  const resumeIpo = (ipoId: string) => {
+    setActionError(null);
+    startTransition(async () => {
+      try {
+        await updateIpoStatus(ipoId, "CREATED");
+        router.refresh();
+      } catch (error) {
+        setActionError(
+          error instanceof Error ? error.message : "Could not resume IPO.",
+        );
+      }
+    });
+  };
 
-  const resumeIpo = useCallback(
-    (ipoId: string) => {
-      setActionError(null);
-      startTransition(async () => {
-        try {
-          await updateIpoStatus(ipoId, "CREATED");
-          refresh();
-        } catch (error) {
-          setActionError(
-            error instanceof Error ? error.message : "Could not resume IPO.",
-          );
-        }
-      });
-    },
-    [refresh],
-  );
-
-  const submitMint = useCallback(
-    (ipoId: string) => {
-      setActionError(null);
-      startTransition(async () => {
-        try {
-          await mintIpo(ipoId);
-          refresh();
-        } catch (error) {
-          setActionError(
-            error instanceof Error ? error.message : "Could not mint IPO.",
-          );
-        }
-      });
-    },
-    [refresh],
-  );
+  const submitMint = (ipoId: string) => {
+    setActionError(null);
+    startTransition(async () => {
+      try {
+        await mintIpo(ipoId);
+        router.refresh();
+      } catch (error) {
+        setActionError(
+          error instanceof Error ? error.message : "Could not mint IPO.",
+        );
+      }
+    });
+  };
 
   const clearActionError = useCallback(() => setActionError(null), []);
 
@@ -138,3 +122,5 @@ export const useIpoActions = () => {
     clearActionError
   };
 };
+
+export type IpoActions = ReturnType<typeof useIpoActions>;

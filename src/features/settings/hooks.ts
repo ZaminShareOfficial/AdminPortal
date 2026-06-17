@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import {
   createTemplate,
   sendNotification,
   updateProfile,
   updateTemplate
-} from "@/features/settings/services/settings-client";
+} from "@/features/settings/services/SettingsApiService";
 import type {
   NotificationFormValues,
   ProfileFormValues,
@@ -20,87 +21,65 @@ export const useSettingsActions = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const refresh = useCallback(() => {
-    router.refresh();
-  }, [router]);
+  const runAction = (action: () => Promise<void>, success: string) => {
+    setActionError(null);
+    setSuccessMessage(null);
+    startTransition(async () => {
+      try {
+        await action();
+        setSuccessMessage(success);
+        router.refresh();
+      } catch (error) {
+        setActionError(
+          error instanceof Error ? error.message : "Request failed.",
+        );
+      }
+    });
+  };
 
-  const runAction = useCallback(
-    async (
-      action: () => Promise<void>,
-      success: string,
-    ) => {
-      setActionError(null);
-      setSuccessMessage(null);
-      startTransition(async () => {
-        try {
-          await action();
-          setSuccessMessage(success);
-          refresh();
-        } catch (error) {
-          setActionError(
-            error instanceof Error ? error.message : "Request failed.",
-          );
-        }
+  const submitProfile = (form: ProfileFormValues) => {
+    runAction(async () => {
+      await updateProfile({
+        firstName: form.firstName.trim() || undefined,
+        lastName: form.lastName.trim() || undefined,
+        email: form.email.trim() || undefined
       });
-    },
-    [refresh],
-  );
+    }, "Profile updated.");
+  };
 
-  const submitProfile = useCallback(
-    (form: ProfileFormValues) => {
-      void runAction(async () => {
-        await updateProfile({
-          firstName: form.firstName.trim() || undefined,
-          lastName: form.lastName.trim() || undefined,
-          email: form.email.trim() || undefined
-        });
-      }, "Profile updated.");
-    },
-    [runAction],
-  );
+  const submitCreateTemplate = (form: TemplateFormValues) => {
+    runAction(async () => {
+      await createTemplate({
+        templateName: form.templateName.trim(),
+        templateString: form.templateString
+      });
+    }, "Template created.");
+  };
 
-  const submitCreateTemplate = useCallback(
-    (form: TemplateFormValues) => {
-      void runAction(async () => {
-        await createTemplate({
-          templateName: form.templateName.trim(),
-          templateString: form.templateString
-        });
-      }, "Template created.");
-    },
-    [runAction],
-  );
+  const submitUpdateTemplate = (form: TemplateFormValues) => {
+    runAction(async () => {
+      await updateTemplate({
+        templateName: form.templateName.trim(),
+        templateString: form.templateString
+      });
+    }, "Template updated.");
+  };
 
-  const submitUpdateTemplate = useCallback(
-    (form: TemplateFormValues) => {
-      void runAction(async () => {
-        await updateTemplate({
-          templateName: form.templateName.trim(),
-          templateString: form.templateString
-        });
-      }, "Template updated.");
-    },
-    [runAction],
-  );
+  const submitNotification = (form: NotificationFormValues) => {
+    runAction(async () => {
+      const parameters =
+        form.parameterKey.trim() && form.parameterValue.trim()
+          ? { [form.parameterKey.trim()]: form.parameterValue.trim() }
+          : undefined;
 
-  const submitNotification = useCallback(
-    (form: NotificationFormValues) => {
-      void runAction(async () => {
-        const parameters =
-          form.parameterKey.trim() && form.parameterValue.trim()
-            ? { [form.parameterKey.trim()]: form.parameterValue.trim() }
-            : undefined;
-
-        await sendNotification({
-          templateName: form.templateName.trim(),
-          identityType: form.identityType,
-          identityValue: form.identityValue.trim(),
-          parameters
-        });
-      }, "Notification sent.");
-    },
-    [runAction],
-  );
+      await sendNotification({
+        templateName: form.templateName.trim(),
+        identityType: form.identityType,
+        identityValue: form.identityValue.trim(),
+        parameters
+      });
+    }, "Notification sent.");
+  };
 
   return {
     actionError,
@@ -109,10 +88,6 @@ export const useSettingsActions = () => {
     submitProfile,
     submitCreateTemplate,
     submitUpdateTemplate,
-    submitNotification,
-    clearMessages: () => {
-      setActionError(null);
-      setSuccessMessage(null);
-    }
+    submitNotification
   };
 };

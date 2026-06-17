@@ -1,64 +1,82 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   cancelOrder,
   listOrderTrades
-} from "@/features/orders/services/orders-client";
+} from "@/features/orders/services/OrdersApiService";
 import type { TradeResponse } from "@/types/backend";
 
 export const useOrderActions = () => {
   const router = useRouter();
-  const [actionError, setActionError] = useState<string | null>(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+  const [tradesError, setTradesError] = useState<string | null>(null);
   const [trades, setTrades] = useState<TradeResponse[]>([]);
-  const [isPending, startTransition] = useTransition();
+  const [isCancelling, startCancelTransition] = useTransition();
+  const [isLoadingTrades, startTradesTransition] = useTransition();
+  const tradesRequestIdRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const refresh = useCallback(() => {
-    router.refresh();
-  }, [router]);
-
-  const submitCancel = useCallback(
-    (orderId: string) => {
-      setActionError(null);
-      startTransition(async () => {
-        try {
-          await cancelOrder(orderId);
-          refresh();
-        } catch (error) {
-          setActionError(
-            error instanceof Error ? error.message : "Could not cancel order.",
-          );
-        }
-      });
-    },
-    [refresh],
-  );
-
-  const loadTrades = useCallback((orderId: string) => {
-    setActionError(null);
-    setTrades([]);
-    startTransition(async () => {
+  const submitCancel = (orderId: string) => {
+    setCancelError(null);
+    startCancelTransition(async () => {
       try {
-        const response = await listOrderTrades(orderId);
+        await cancelOrder(orderId);
+        router.refresh();
+      } catch (error) {
+        setCancelError(
+          error instanceof Error ? error.message : "Could not cancel order.",
+        );
+      }
+    });
+  };
+
+  const loadTrades = (orderId: string) => {
+    setTradesError(null);
+    setTrades([]);
+    abortControllerRef.current?.abort();
+
+    const requestId = tradesRequestIdRef.current + 1;
+    tradesRequestIdRef.current = requestId;
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    startTradesTransition(async () => {
+      try {
+        const response = await listOrderTrades(orderId, controller.signal);
+        if (tradesRequestIdRef.current !== requestId) {
+          return;
+        }
         setTrades(response);
       } catch (error) {
-        setActionError(
+        if (controller.signal.aborted) {
+          return;
+        }
+        if (tradesRequestIdRef.current !== requestId) {
+          return;
+        }
+        setTradesError(
           error instanceof Error ? error.message : "Could not load trades.",
         );
       }
     });
-  }, []);
+  };
 
-  const clearActionError = useCallback(() => setActionError(null), []);
+  const clearTrades = () => {
+    abortControllerRef.current?.abort();
+    setTrades([]);
+    setTradesError(null);
+  };
 
   return {
-    actionError,
-    isPending,
+    cancelError,
+    tradesError,
+    isCancelling,
+    isLoadingTrades,
     trades,
     submitCancel,
     loadTrades,
-    clearActionError,
-    clearTrades: () => setTrades([])
+    clearTrades
   };
 };

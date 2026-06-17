@@ -2,11 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { ApiErrorBanner } from "@/components/admin/api-error-banner";
-import { CreatePropertyTrigger } from "@/features/properties/components/create-property-modal";
+import { CreatePropertyModal } from "@/features/properties/components/create-property-modal";
 import { PropertiesTable } from "@/features/properties/components/properties-table";
 import { PropertyEditPanel } from "@/features/properties/components/property-edit-panel";
+import { usePropertyActions } from "@/features/properties/hooks";
 import type { PropertiesContentProps } from "@/features/properties/types";
 import { mapPropertyToRow } from "@/lib/mappers/property";
+import { Button } from "@heroui/react";
+import { useOverlayState } from "@heroui/react";
+import { Icon } from "@/components/admin/icon";
 
 export function PropertiesContent({
   initialProperties,
@@ -15,6 +19,8 @@ export function PropertiesContent({
   const [selectedId, setSelectedId] = useState<string | null>(
     initialProperties[0]?.id ?? null,
   );
+  const propertyActions = usePropertyActions();
+  const createModal = useOverlayState();
 
   const properties = useMemo(
     () => initialProperties.map(mapPropertyToRow),
@@ -38,7 +44,15 @@ export function PropertiesContent({
               Property Management
             </h1>
           </div>
-          <CreatePropertyTrigger />
+          <Button
+            variant="primary"
+            className="saffron-gradient text-xs font-bold uppercase tracking-widest text-on-primary-fixed"
+            onPress={createModal.open}
+            data-testid="open-create-property"
+          >
+            <Icon name="add" className="text-lg" />
+            Create Property
+          </Button>
         </div>
 
         {error ? (
@@ -55,8 +69,19 @@ export function PropertiesContent({
       </section>
 
       <aside className="w-96 overflow-y-auto border-l border-outline-variant/10 bg-surface-container-low p-6">
-        <PropertyEditPanel property={selectedProperty} />
+        <PropertyEditPanel
+          property={selectedProperty}
+          propertyActions={propertyActions}
+        />
       </aside>
+
+      {createModal.isOpen ? (
+        <CreatePropertyModal
+          isOpen={createModal.isOpen}
+          onOpenChange={createModal.setOpen}
+          propertyActions={propertyActions}
+        />
+      ) : null}
     </div>
   );
 }
