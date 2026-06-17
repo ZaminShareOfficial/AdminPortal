@@ -1,14 +1,13 @@
 import type {
-  BulletinBoardEntryResponse,
   IpoDetailResponse,
   IpoSummaryResponse,
   ProfileResponse,
   PropertyHoldersResponse,
-  PropertyOrderBookResponse,
   PropertyPortfolioSummaryResponse,
   PropertyResponse,
   UserPortfolioResponse,
 } from "@/types/backend";
+import { listOpenOrders } from "@/features/orders/services/orders-service";
 import { apiFetch } from "@/lib/api/server-client";
 
 export function getProfile() {
@@ -52,53 +51,7 @@ export function getPropertyHolders(propertyId: string) {
   );
 }
 
-export function getBulletinBoard() {
-  return apiFetch<BulletinBoardEntryResponse[]>("/orders/all");
-}
-
-export function getPropertyOrderBook(propertyId: string) {
-  return apiFetch<PropertyOrderBookResponse>(
-    `/properties/${propertyId}/orderbook`,
-  );
-}
-
-export async function listOpenOrders() {
-  const bulletin = await getBulletinBoard();
-  const active = bulletin.filter(
-    (entry) =>
-      (entry.openBuyCount ?? 0) > 0 || (entry.openSellCount ?? 0) > 0,
-  );
-
-  const books = await Promise.all(
-    active.map((entry) => getPropertyOrderBook(entry.propertyId)),
-  );
-
-  return books.flatMap((book) => {
-    const mapLevel = (
-      side: "BUY" | "SELL",
-      level: PropertyOrderBookResponse["bids"][number],
-    ) => ({
-      orderId: level.orderId,
-      propertyId: book.propertyId,
-      propertyTitle: book.propertyTitle,
-      side,
-      price: level.price,
-      quantity: level.quantity,
-      filledQuantity: level.filledQuantity,
-      remainingQuantity:
-        level.quantity != null && level.filledQuantity != null
-          ? level.quantity - level.filledQuantity
-          : level.quantity,
-      status: "OPEN" as const,
-      createdAt: level.createdAt,
-    });
-
-    return [
-      ...book.bids.map((level) => mapLevel("BUY", level)),
-      ...book.asks.map((level) => mapLevel("SELL", level)),
-    ];
-  });
-}
+export { listOpenOrders };
 
 export async function loadDashboardData() {
   const [properties, ipos, openOrders, portfolioProperties, userPortfolios] =
