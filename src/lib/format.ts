@@ -36,6 +36,43 @@ export function formatNumber(value: number | null | undefined) {
   return new Intl.NumberFormat("en-US").format(value);
 }
 
+/** Parse a dollar input string into backend paise (1/100 currency unit). */
+export function parseDollarsToPaise(value: string): number | null {
+  const normalized = value.replace(/[^0-9.]/g, "");
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  if (Number.isNaN(parsed)) {
+    return null;
+  }
+
+  return Math.round(parsed * 100);
+}
+
+export function paiseToDollarInput(value: number | null | undefined) {
+  if (value == null) {
+    return "";
+  }
+
+  return String(value / 100);
+}
+
+export function parseDollarInput(value: string): number | null {
+  const normalized = value.replace(/[^0-9.]/g, "");
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  if (Number.isNaN(parsed)) {
+    return null;
+  }
+
+  return parsed;
+}
+
 export function formatRelativeTime(value: string | null | undefined) {
   if (!value) {
     return "—";
