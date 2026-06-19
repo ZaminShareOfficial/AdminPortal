@@ -4,19 +4,21 @@ import {
   Button,
   Input,
   Label,
-  TextArea,
   TextField
 } from "@heroui/react";
 import { useState } from "react";
 import { EnumSelect } from "@/components/admin/enum-select";
 import { Icon } from "@/components/admin/icon";
 import { NumericInputField } from "@/components/admin/numeric-input-field";
-import { PROPERTY_TYPE_SELECT_OPTIONS } from "@/constants/property";
+import {
+  PROPERTY_STATUS_SELECT_OPTIONS,
+  PROPERTY_TYPE_SELECT_OPTIONS
+} from "@/constants/property";
+import { UrlListUploadField } from "@/features/uploads/components/url-list-upload-field";
 import { propertyToForm } from "@/features/properties/mappers";
 import type { PropertyActions } from "@/features/properties/use-property-actions";
 import type { PropertyCreateFormValues } from "@/features/properties/types";
 import type { PropertyResponse } from "@/types/backend";
-import { getPropertyStatusClass, mapPropertyStatus } from "@/lib/mappers/property";
 
 type PropertyEditFormProps = {
   property: PropertyResponse;
@@ -31,7 +33,6 @@ const PropertyEditForm = ({
     propertyToForm(property),
   );
   const { actionError, isPending, submitUpdate } = propertyActions;
-  const statusLabel = mapPropertyStatus(property.status);
 
   return (
     <div className="space-y-6">
@@ -125,23 +126,21 @@ const PropertyEditForm = ({
         />
       </div>
 
-      <TextField
-        name="photos"
+      <UrlListUploadField
+        label="Photo URLs"
         value={form.photos}
-        onChange={(value) => setForm({ ...form, photos: value })}
-      >
-        <Label>Photo URLs</Label>
-        <TextArea data-testid="edit-property-photos" rows={3} />
-      </TextField>
+        onChange={(photos) => setForm({ ...form, photos })}
+        category="photos"
+        testId="edit-property-photos"
+      />
 
-      <TextField
-        name="documents"
+      <UrlListUploadField
+        label="Document URLs"
         value={form.documents}
-        onChange={(value) => setForm({ ...form, documents: value })}
-      >
-        <Label>Document URLs</Label>
-        <TextArea data-testid="edit-property-documents" rows={3} />
-      </TextField>
+        onChange={(documents) => setForm({ ...form, documents })}
+        category="documents"
+        testId="edit-property-documents"
+      />
 
       <EnumSelect
         label="Property type"
@@ -151,16 +150,13 @@ const PropertyEditForm = ({
         testId="edit-property-type"
       />
 
-      <div className="rounded bg-surface-container-lowest p-3">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-          Status (read-only)
-        </p>
-        <span
-          className={`mt-2 inline-flex rounded px-2 py-0.5 text-[10px] font-bold uppercase ${getPropertyStatusClass(statusLabel)}`}
-        >
-          {statusLabel}
-        </span>
-      </div>
+      <EnumSelect
+        label="Status"
+        value={form.status}
+        options={PROPERTY_STATUS_SELECT_OPTIONS}
+        onChange={(status) => setForm({ ...form, status })}
+        testId="edit-property-status"
+      />
 
       {actionError ? (
         <p className="text-sm text-error" role="alert">

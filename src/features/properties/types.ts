@@ -18,6 +18,7 @@ export type PropertyCreateFormValues = {
   documents: string;
   listingBroker: string;
   propertyType: string;
+  status: string;
 };
 
 export type PropertyFormFieldErrors = Partial<

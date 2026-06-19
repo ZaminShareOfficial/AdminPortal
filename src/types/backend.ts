@@ -1,10 +1,4 @@
-export type PropertyStatus =
-  | "DRAFT"
-  | "APPROVED"
-  | "IPO_OPEN"
-  | "IPO_PAUSE"
-  | "IPO_CLOSED"
-  | "TRADING";
+export type PropertyStatus = "DRAFT" | "CREATED" | "IPO" | "LISTED";
 
 export type PropertyResponse = {
   id: string;
@@ -181,6 +175,7 @@ export type CreatePropertyRequest = {
   listingBroker?: string;
   promoterBroker?: string;
   propertyType?: PropertyType;
+  status?: PropertyStatus;
 };
 
 export type UpdatePropertyRequest = Partial<CreatePropertyRequest>;

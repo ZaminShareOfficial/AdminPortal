@@ -10,14 +10,18 @@ import {
   LONGITUDE_MIN
 } from "@/constants/property";
 import { parseInrInput, parseInrToPaise } from "@/lib/format";
-import { parsePropertyType } from "@/lib/validators/property";
+import {
+  parsePropertyStatus,
+  parsePropertyType
+} from "@/lib/validators/property";
 import type {
   PropertyCreateFormValues,
   PropertyFormFieldErrors
 } from "@/features/properties/types";
+import { formatUrlList, parseUrlList } from "@/lib/url-list";
 
 const urlListToText = (values?: string[] | null) =>
-  values?.filter(Boolean).join("\n") ?? "";
+  formatUrlList(values ?? []);
 
 export const emptyPropertyForm = (): PropertyCreateFormValues => ({
   title: "",
@@ -30,7 +34,8 @@ export const emptyPropertyForm = (): PropertyCreateFormValues => ({
   photos: "",
   documents: "",
   listingBroker: "",
-  propertyType: "RESIDENTIAL"
+  propertyType: "RESIDENTIAL",
+  status: "DRAFT"
 });
 
 export const propertyToForm = (
@@ -54,14 +59,11 @@ export const propertyToForm = (
   photos: urlListToText(property.photos),
   documents: urlListToText(property.documents),
   listingBroker: property.listingBroker ?? "",
-  propertyType: property.propertyType ?? "RESIDENTIAL"
+  propertyType: property.propertyType ?? "RESIDENTIAL",
+  status: property.status ?? "DRAFT"
 });
 
-export const parseUrlList = (value: string): string[] =>
-  value
-    .split(/\r?\n/)
-    .map((entry) => entry.trim())
-    .filter(Boolean);
+export { parseUrlList } from "@/lib/url-list";
 
 const parseCoordinate = (
   value: string,
@@ -223,6 +225,7 @@ export const formToUpdatePayload = (
     valuation: valuation ?? undefined,
     tokenSupply: Number.isNaN(tokenSupply) ? undefined : tokenSupply,
     tokenPrice: tokenPrice ?? undefined,
+    status: parsePropertyStatus(form.status),
     ...buildOptionalPayload(form)
   };
 };

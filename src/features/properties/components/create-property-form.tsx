@@ -13,6 +13,7 @@ import { Icon } from "@/components/admin/icon";
 import { NumericInputField } from "@/components/admin/numeric-input-field";
 import { PROPERTY_TYPE_SELECT_OPTIONS } from "@/constants/property";
 import { PropertyFormSection } from "@/features/properties/components/property-form-section";
+import { UrlListUploadField } from "@/features/uploads/components/url-list-upload-field";
 import { computeDerivedTokenPrice } from "@/features/properties/mappers";
 import type {
   PropertyCreateFormValues,
@@ -197,33 +198,23 @@ export const CreatePropertyForm = ({
           />
         </div>
 
-        <TextField
-          name="photos"
+        <UrlListUploadField
+          label="Photo URLs"
           value={form.photos}
-          onChange={(value) => onChange({ ...form, photos: value })}
-        >
-          <Label>Photo URLs</Label>
-          <TextArea
-            data-testid="property-photos-input"
-            placeholder="https://cdn.example.com/property/front.jpg"
-            rows={3}
-          />
-          <p className="text-xs text-on-surface-variant">One URL per line.</p>
-        </TextField>
+          onChange={(photos) => onChange({ ...form, photos })}
+          category="photos"
+          testId="property-photos-input"
+          placeholder="https://cdn.example.com/property/front.jpg"
+        />
 
-        <TextField
-          name="documents"
+        <UrlListUploadField
+          label="Document URLs"
           value={form.documents}
-          onChange={(value) => onChange({ ...form, documents: value })}
-        >
-          <Label>Document URLs</Label>
-          <TextArea
-            data-testid="property-documents-input"
-            placeholder="https://cdn.example.com/property/valuation.pdf"
-            rows={3}
-          />
-          <p className="text-xs text-on-surface-variant">One URL per line.</p>
-        </TextField>
+          onChange={(documents) => onChange({ ...form, documents })}
+          category="documents"
+          testId="property-documents-input"
+          placeholder="https://cdn.example.com/property/valuation.pdf"
+        />
       </PropertyFormSection>
 
       <PropertyFormSection

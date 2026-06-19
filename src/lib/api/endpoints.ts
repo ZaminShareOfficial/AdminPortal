@@ -46,6 +46,9 @@ export const API_ENDPOINTS = {
     createTemplate: "POST /admin/template",
     updateTemplate: "PATCH /admin/template",
   },
+  uploads: {
+    upload: "POST /admin/uploads (Next.js route)",
+  },
 } as const;
 
 export const SCREEN_API_MAP = {
