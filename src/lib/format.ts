@@ -1,13 +1,13 @@
-export function formatUsd(value: number | null | undefined) {
+export function formatInr(value: number | null | undefined) {
   if (value == null) {
     return "—";
   }
 
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: value >= 1_000_000 ? 1 : 2,
-    notation: value >= 1_000_000 ? "compact" : "standard",
+    notation: value >= 1_000_000 ? "compact" : "standard"
   }).format(value);
 }
 
@@ -17,7 +17,7 @@ export function formatPaise(value: number | null | undefined) {
     return "—";
   }
 
-  return formatUsd(value / 100);
+  return formatInr(value / 100);
 }
 
 export function formatPercent(value: number | null | undefined) {
@@ -33,7 +33,44 @@ export function formatNumber(value: number | null | undefined) {
     return "—";
   }
 
-  return new Intl.NumberFormat("en-US").format(value);
+  return new Intl.NumberFormat("en-IN").format(value);
+}
+
+/** Parse an INR input string into backend paise (1/100 currency unit). */
+export function parseInrToPaise(value: string): number | null {
+  const normalized = value.replace(/[^0-9.]/g, "");
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  if (Number.isNaN(parsed)) {
+    return null;
+  }
+
+  return Math.round(parsed * 100);
+}
+
+export function paiseToInrInput(value: number | null | undefined) {
+  if (value == null) {
+    return "";
+  }
+
+  return String(value / 100);
+}
+
+export function parseInrInput(value: string): number | null {
+  const normalized = value.replace(/[^0-9.]/g, "");
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  if (Number.isNaN(parsed)) {
+    return null;
+  }
+
+  return parsed;
 }
 
 export function formatRelativeTime(value: string | null | undefined) {

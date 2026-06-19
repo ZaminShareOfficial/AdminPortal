@@ -1,5 +1,6 @@
 import { UsersContent } from "@/components/users/users-content";
 import { getErrorMessage } from "@/lib/api/errors";
+import { guardUnauthorized } from "@/lib/auth/unauthorized";
 import { mapUserPortfolioToRow } from "@/lib/mappers/portfolio";
 import { listUserPortfolios } from "@/lib/services/backend";
 
@@ -17,6 +18,7 @@ export default async function UsersPage() {
       />
     );
   } catch (error) {
+    await guardUnauthorized(error);
     return (
       <UsersContent
         users={[]}

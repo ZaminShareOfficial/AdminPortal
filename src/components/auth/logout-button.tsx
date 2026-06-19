@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { LOGIN_PATH } from "@/constants/routes";
 import { clearSession } from "@/lib/auth/auth-service";
 import { Icon } from "@/components/admin/icon";
 
@@ -16,7 +17,7 @@ export function LogoutButton() {
       onClick={() => {
         startTransition(async () => {
           await clearSession();
-          router.replace("/login");
+          router.replace(LOGIN_PATH);
           router.refresh();
         });
       }}

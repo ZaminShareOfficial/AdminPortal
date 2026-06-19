@@ -7,7 +7,7 @@ const createOpenOrder = (overrides?: Partial<OpenOrder>): OpenOrder => ({
   propertyId: "property-1",
   propertyTitle: "Downtown Tower",
   side: "BUY",
-  price: 125.5,
+  price: 12550,
   quantity: 10,
   filledQuantity: 2,
   remainingQuantity: 8,
@@ -25,7 +25,7 @@ describe("order mappers", () => {
       expect(actual.sideClass).toContain("primary");
       expect(actual.initials).toBe("BY");
       expect(actual.id).toBe("#ABC12345");
-      expect(actual.price).toBe("$125.50");
+      expect(actual.price).toBe("₹125.50");
       expect(actual.qty).toBe("8.00");
     });
 

@@ -1,10 +1,4 @@
-export type PropertyStatus =
-  | "DRAFT"
-  | "APPROVED"
-  | "IPO_OPEN"
-  | "IPO_PAUSE"
-  | "IPO_CLOSED"
-  | "TRADING";
+export type PropertyStatus = "DRAFT" | "CREATED" | "IPO" | "LISTED";
 
 export type PropertyResponse = {
   id: string;
@@ -15,6 +9,8 @@ export type PropertyResponse = {
   tokenPrice: number | null;
   status: PropertyStatus;
   photos?: string[] | null;
+  documents?: string[] | null;
+  coordinates?: PropertyCoordinates | null;
   listingBroker?: string | null;
   promoterBroker?: string | null;
   propertyType?: string | null;
@@ -154,3 +150,32 @@ export type IpoDetailResponse = {
   startTime?: string | null;
   endTime?: string | null;
 };
+
+export type PropertyType =
+  | "RESIDENTIAL"
+  | "COMMERCIAL"
+  | "INDUSTRIAL"
+  | "AGRICULTURE"
+  | "PLOT";
+
+export type PropertyCoordinates = {
+  latitude: number;
+  longitude: number;
+};
+
+export type CreatePropertyRequest = {
+  title: string;
+  location: string;
+  valuation: number;
+  tokenSupply: number;
+  tokenPrice: number;
+  photos?: string[];
+  coordinates?: PropertyCoordinates;
+  documents?: string[];
+  listingBroker?: string;
+  promoterBroker?: string;
+  propertyType?: PropertyType;
+  status?: PropertyStatus;
+};
+
+export type UpdatePropertyRequest = Partial<CreatePropertyRequest>;

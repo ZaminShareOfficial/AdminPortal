@@ -1,7 +1,8 @@
 import { Icon } from "@/components/admin/icon";
 import { ApiErrorBanner } from "@/components/admin/api-error-banner";
 import { getErrorMessage } from "@/lib/api/errors";
-import { formatNumber, formatPaise, formatUsd } from "@/lib/format";
+import { guardUnauthorized } from "@/lib/auth/unauthorized";
+import { formatNumber, formatPaise } from "@/lib/format";
 import {
   getPropertyStatusClass,
   mapPropertyStatus,
@@ -48,7 +49,7 @@ export default async function DashboardPage() {
     recentProperties = data.properties.slice(0, 3).map((property, index) => ({
       name: property.title,
       type: property.propertyType ?? "Property",
-      valuation: formatUsd(property.valuation),
+      valuation: formatPaise(property.valuation),
       status: mapPropertyStatus(property.status),
       statusClass: getPropertyStatusClass(mapPropertyStatus(property.status)),
       broker: property.listingBroker ?? "—",
@@ -60,13 +61,14 @@ export default async function DashboardPage() {
       return {
         symbol: order.propertyTitle,
         detail: `${isBuy ? "Buy" : "Sell"} • ${order.remainingQuantity ?? "—"} Units`,
-        price: formatUsd(order.price),
+        price: formatPaise(order.price),
         time: "Live",
         borderClass: isBuy ? "border-primary" : "border-error",
         priceClass: isBuy ? "text-primary" : "text-on-surface",
       };
     });
   } catch (loadError) {
+    await guardUnauthorized(loadError);
     error = getErrorMessage(
       loadError,
       "Could not load dashboard data from the backend.",

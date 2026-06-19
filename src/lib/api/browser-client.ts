@@ -1,4 +1,6 @@
 import { getApiBaseUrl } from "@/lib/api/config";
+import { UNAUTHORIZED_STATUS } from "@/constants/auth";
+import { handleClientUnauthorized } from "@/lib/auth/unauthorized-client";
 import { ApiError } from "@/lib/api/errors";
 
 export async function clientFetch<T>(
@@ -19,6 +21,10 @@ export async function clientFetch<T>(
   });
 
   if (!response.ok) {
+    if (response.status === UNAUTHORIZED_STATUS) {
+      await handleClientUnauthorized();
+    }
+
     let message = response.statusText;
     try {
       const body = (await response.json()) as { message?: string };

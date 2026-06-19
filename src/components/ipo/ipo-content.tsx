@@ -63,7 +63,7 @@ export function IpoContent({ ipos, error = null }: IpoContentProps) {
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-outline-variant/10 bg-surface-container-low">
-                  {["Property", "Token Supply", "Price (USD)", "Subscription", "Status", "Actions"].map((h, i) => (
+                  {["Property", "Token Supply", "Price (INR)", "Subscription", "Status", "Actions"].map((h, i) => (
                     <th key={h} scope="col" className={`px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ${i === 0 ? "px-6" : ""} ${i === 5 ? "px-6 text-right" : ""} ${i === 3 ? "w-48" : ""}`}>{h}</th>
                   ))}
                 </tr>

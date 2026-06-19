@@ -1,5 +1,6 @@
 import { TokensContent } from "@/components/tokens/tokens-content";
 import { getErrorMessage } from "@/lib/api/errors";
+import { guardUnauthorized } from "@/lib/auth/unauthorized";
 import {
   mapHolderToRow,
   summarizePropertyPortfolio,
@@ -41,6 +42,7 @@ export default async function TokensPage() {
       />
     );
   } catch (error) {
+    await guardUnauthorized(error);
     return (
       <TokensContent
         propertyTitle="—"
