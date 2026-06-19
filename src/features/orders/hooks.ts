@@ -1,4 +1,5 @@
 import { getErrorMessage } from "@/lib/api/errors";
+import { guardUnauthorized } from "@/lib/auth/unauthorized";
 import { mapOpenOrderToRow, mapOrderToFeedItem } from "@/features/orders/mappers";
 import { listOpenOrders } from "@/features/orders/services/orders-service";
 import type { OrdersPageData } from "@/features/orders/types";
@@ -16,6 +17,7 @@ export async function loadOrdersPageData(): Promise<OrdersPageData> {
       error: null,
     };
   } catch (error) {
+    await guardUnauthorized(error);
     return {
       orders: [],
       feed: [],

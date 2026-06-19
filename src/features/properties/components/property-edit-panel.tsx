@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { EnumSelect } from "@/components/admin/enum-select";
 import { Icon } from "@/components/admin/icon";
+import { NumericInputField } from "@/components/admin/numeric-input-field";
 import { PROPERTY_TYPE_SELECT_OPTIONS } from "@/constants/property";
 import { propertyToForm } from "@/features/properties/mappers";
 import type { PropertyActions } from "@/features/properties/use-property-actions";
@@ -61,32 +62,33 @@ const PropertyEditForm = ({
         <Input data-testid="edit-property-location" />
       </TextField>
 
-      <TextField
+      <NumericInputField
         name="valuation"
+        label="Valuation (INR)"
         value={form.valuation}
-        onChange={(value) => setForm({ ...form, valuation: value })}
-      >
-        <Label>Valuation (USD)</Label>
-        <Input data-testid="edit-property-valuation" />
-      </TextField>
+        onChange={(valuation) => setForm({ ...form, valuation })}
+        placeholder="1,28,00,000"
+        testId="edit-property-valuation"
+      />
 
       <div className="grid grid-cols-2 gap-4">
-        <TextField
+        <NumericInputField
           name="tokenSupply"
+          label="Token supply"
           value={form.tokenSupply}
-          onChange={(value) => setForm({ ...form, tokenSupply: value })}
-        >
-          <Label>Token supply</Label>
-          <Input data-testid="edit-property-supply" />
-        </TextField>
-        <TextField
+          onChange={(tokenSupply) => setForm({ ...form, tokenSupply })}
+          placeholder="5,00,000"
+          testId="edit-property-supply"
+        />
+        <NumericInputField
           name="tokenPrice"
+          label="Token price (INR)"
+          allowDecimal
           value={form.tokenPrice}
-          onChange={(value) => setForm({ ...form, tokenPrice: value })}
-        >
-          <Label>Token price (USD)</Label>
-          <Input data-testid="edit-property-price" />
-        </TextField>
+          onChange={(tokenPrice) => setForm({ ...form, tokenPrice })}
+          placeholder="25.60"
+          testId="edit-property-price"
+        />
       </div>
 
       <TextField
@@ -99,22 +101,28 @@ const PropertyEditForm = ({
       </TextField>
 
       <div className="grid grid-cols-2 gap-4">
-        <TextField
+        <NumericInputField
           name="latitude"
+          label="Latitude"
+          allowDecimal
+          allowNegative
+          maxDecimalPlaces={6}
           value={form.latitude}
-          onChange={(value) => setForm({ ...form, latitude: value })}
-        >
-          <Label>Latitude</Label>
-          <Input data-testid="edit-property-latitude" />
-        </TextField>
-        <TextField
+          onChange={(latitude) => setForm({ ...form, latitude })}
+          placeholder="12.9716"
+          testId="edit-property-latitude"
+        />
+        <NumericInputField
           name="longitude"
+          label="Longitude"
+          allowDecimal
+          allowNegative
+          maxDecimalPlaces={6}
           value={form.longitude}
-          onChange={(value) => setForm({ ...form, longitude: value })}
-        >
-          <Label>Longitude</Label>
-          <Input data-testid="edit-property-longitude" />
-        </TextField>
+          onChange={(longitude) => setForm({ ...form, longitude })}
+          placeholder="77.5946"
+          testId="edit-property-longitude"
+        />
       </div>
 
       <TextField

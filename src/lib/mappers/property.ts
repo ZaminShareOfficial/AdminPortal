@@ -1,5 +1,5 @@
 import type { PropertyResponse } from "@/types/backend";
-import { formatNumber, formatUsd } from "@/lib/format";
+import { formatNumber, formatPaise } from "@/lib/format";
 
 export type PropertyRowStatus =
   | "Verified"
@@ -62,7 +62,7 @@ export function mapPropertyToRow(property: PropertyResponse): PropertyRow {
     broker: property.listingBroker ?? "—",
     brokerLink: Boolean(property.listingBroker),
     tokens: formatNumber(property.tokenSupply),
-    price: formatUsd(property.valuation),
+    price: formatPaise(property.valuation),
     status: mapPropertyStatus(property.status),
   };
 }
@@ -73,9 +73,9 @@ export function mapPropertyToDetail(property: PropertyResponse) {
     name: property.title,
     location: property.location,
     broker: property.listingBroker ?? "—",
-    valuation: formatUsd(property.valuation),
+    valuation: formatPaise(property.valuation),
     tokenSupply: formatNumber(property.tokenSupply),
-    tokenPrice: formatUsd(property.tokenPrice),
+    tokenPrice: formatPaise(property.tokenPrice),
     status: mapPropertyStatus(property.status),
   };
 }

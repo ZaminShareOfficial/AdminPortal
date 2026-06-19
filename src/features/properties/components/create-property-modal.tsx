@@ -66,8 +66,8 @@ export const CreatePropertyModal = ({
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <Modal.Backdrop>
-        <Modal.Container className="max-w-2xl">
-          <Modal.Dialog className="max-h-[90vh]">
+        <Modal.Container className="!w-[75vw] sm:!w-[75vw]">
+          <Modal.Dialog className="max-h-[90vh] !w-[75vw] !max-w-[75vw]">
             <Modal.Header>
               <Modal.Heading>Create property</Modal.Heading>
               <p className="text-sm text-on-surface-variant">

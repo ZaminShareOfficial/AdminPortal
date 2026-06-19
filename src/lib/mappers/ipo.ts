@@ -1,5 +1,5 @@
 import type { IpoSummaryResponse } from "@/types/backend";
-import { formatNumber, formatUsd } from "@/lib/format";
+import { formatNumber, formatPaise } from "@/lib/format";
 
 export type IpoRow = {
   name: string;
@@ -64,7 +64,7 @@ export function mapIpoToRow(ipo: IpoSummaryResponse): IpoRow {
     id: ipo.ipoId,
     location: ipo.propertyLocation,
     supply: formatNumber(ipo.totalTokens),
-    price: formatUsd(ipo.tokenPrice),
+    price: formatPaise(ipo.tokenPrice),
     progress: 0,
     progressLabel: "Live data pending",
     status: status.label,

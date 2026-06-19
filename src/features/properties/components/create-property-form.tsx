@@ -10,6 +10,7 @@ import {
 import { useMemo } from "react";
 import { EnumSelect } from "@/components/admin/enum-select";
 import { Icon } from "@/components/admin/icon";
+import { NumericInputField } from "@/components/admin/numeric-input-field";
 import { PROPERTY_TYPE_SELECT_OPTIONS } from "@/constants/property";
 import { PropertyFormSection } from "@/features/properties/components/property-form-section";
 import { computeDerivedTokenPrice } from "@/features/properties/mappers";
@@ -17,6 +18,7 @@ import type {
   PropertyCreateFormValues,
   PropertyFormFieldErrors
 } from "@/features/properties/types";
+import { formatInr } from "@/lib/format";
 
 type CreatePropertyFormProps = {
   form: PropertyCreateFormValues;
@@ -95,29 +97,29 @@ export const CreatePropertyForm = ({
         description="Valuation and supply determine the implied token price."
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <TextField
+          <NumericInputField
             name="valuation"
+            label="Asset valuation (INR)"
             isRequired
             value={form.valuation}
-            onChange={(value) => onChange({ ...form, valuation: value })}
+            onChange={(valuation) => onChange({ ...form, valuation })}
             isInvalid={Boolean(fieldErrors.valuation)}
-          >
-            <Label>Asset valuation (USD)</Label>
-            <Input data-testid="property-valuation-input" placeholder="12800000" />
-            <FieldError message={fieldErrors.valuation} />
-          </TextField>
+            errorMessage={fieldErrors.valuation}
+            placeholder="1,28,00,000"
+            testId="property-valuation-input"
+          />
 
-          <TextField
+          <NumericInputField
             name="tokenSupply"
+            label="Token supply"
             isRequired
             value={form.tokenSupply}
-            onChange={(value) => onChange({ ...form, tokenSupply: value })}
+            onChange={(tokenSupply) => onChange({ ...form, tokenSupply })}
             isInvalid={Boolean(fieldErrors.tokenSupply)}
-          >
-            <Label>Token supply</Label>
-            <Input data-testid="property-supply-input" placeholder="500000" />
-            <FieldError message={fieldErrors.tokenSupply} />
-          </TextField>
+            errorMessage={fieldErrors.tokenSupply}
+            placeholder="5,00,000"
+            testId="property-supply-input"
+          />
         </div>
 
         <div className="rounded border border-outline-variant/10 bg-surface-container-lowest p-4">
@@ -127,7 +129,7 @@ export const CreatePropertyForm = ({
                 Implied token price
               </p>
               <p className="mt-1 text-sm font-bold text-secondary">
-                {derivedTokenPrice ? `$${derivedTokenPrice}` : "—"}
+                {derivedTokenPrice ? formatInr(Number(derivedTokenPrice)) : "—"}
                 <span className="ml-1 text-[10px] font-normal text-on-surface-variant">
                   / token
                 </span>
@@ -147,17 +149,18 @@ export const CreatePropertyForm = ({
           </div>
         </div>
 
-        <TextField
+        <NumericInputField
           name="tokenPrice"
+          label="Token price (INR)"
           isRequired
+          allowDecimal
           value={form.tokenPrice}
-          onChange={(value) => onChange({ ...form, tokenPrice: value })}
+          onChange={(tokenPrice) => onChange({ ...form, tokenPrice })}
           isInvalid={Boolean(fieldErrors.tokenPrice)}
-        >
-          <Label>Token price (USD)</Label>
-          <Input data-testid="property-price-input" placeholder="25.60" />
-          <FieldError message={fieldErrors.tokenPrice} />
-        </TextField>
+          errorMessage={fieldErrors.tokenPrice}
+          placeholder="25.60"
+          testId="property-price-input"
+        />
       </PropertyFormSection>
 
       <PropertyFormSection
@@ -165,27 +168,33 @@ export const CreatePropertyForm = ({
         description="Map coordinates and asset URLs sent in the create payload."
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <TextField
+          <NumericInputField
             name="latitude"
+            label="Latitude"
+            allowDecimal
+            allowNegative
+            maxDecimalPlaces={6}
             value={form.latitude}
-            onChange={(value) => onChange({ ...form, latitude: value })}
+            onChange={(latitude) => onChange({ ...form, latitude })}
             isInvalid={Boolean(fieldErrors.latitude)}
-          >
-            <Label>Latitude</Label>
-            <Input data-testid="property-latitude-input" placeholder="12.9716" />
-            <FieldError message={fieldErrors.latitude} />
-          </TextField>
+            errorMessage={fieldErrors.latitude}
+            placeholder="12.9716"
+            testId="property-latitude-input"
+          />
 
-          <TextField
+          <NumericInputField
             name="longitude"
+            label="Longitude"
+            allowDecimal
+            allowNegative
+            maxDecimalPlaces={6}
             value={form.longitude}
-            onChange={(value) => onChange({ ...form, longitude: value })}
+            onChange={(longitude) => onChange({ ...form, longitude })}
             isInvalid={Boolean(fieldErrors.longitude)}
-          >
-            <Label>Longitude</Label>
-            <Input data-testid="property-longitude-input" placeholder="77.5946" />
-            <FieldError message={fieldErrors.longitude} />
-          </TextField>
+            errorMessage={fieldErrors.longitude}
+            placeholder="77.5946"
+            testId="property-longitude-input"
+          />
         </div>
 
         <TextField

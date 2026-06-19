@@ -1,4 +1,4 @@
-import { formatRelativeTime, formatUsd } from "@/lib/format";
+import { formatPaise, formatRelativeTime } from "@/lib/format";
 import type { OpenOrder, OrderFeedItem, SurveillanceOrderRow } from "@/features/orders/types";
 
 export function mapOpenOrderToRow(order: OpenOrder): SurveillanceOrderRow {
@@ -16,7 +16,7 @@ export function mapOpenOrderToRow(order: OpenOrder): SurveillanceOrderRow {
     sideClass: isBuy
       ? "bg-primary/10 text-primary"
       : "bg-error-container text-error",
-    price: formatUsd(order.price ?? 0),
+    price: formatPaise(order.price ?? 0),
     qty: order.remainingQuantity?.toFixed(2) ?? "—",
     status: order.status,
     statusDot: "bg-primary",
@@ -31,6 +31,6 @@ export function mapOrderToFeedItem(order: OpenOrder): OrderFeedItem {
     type: isBuy ? "Limit Buy" : "Limit Sell",
     time: formatRelativeTime(order.createdAt ?? ""),
     dotClass: isBuy ? "bg-primary" : "bg-error",
-    summary: `Open ${order.propertyTitle} ${isBuy ? "buy" : "sell"} order for ${order.remainingQuantity ?? "—"} tokens at ${formatUsd(order.price ?? 0)}.`,
+    summary: `Open ${order.propertyTitle} ${isBuy ? "buy" : "sell"} order for ${order.remainingQuantity ?? "—"} tokens at ${formatPaise(order.price ?? 0)}.`,
   };
 }

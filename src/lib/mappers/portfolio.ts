@@ -7,8 +7,7 @@ import type {
 import {
   formatNumber,
   formatPaise,
-  formatPercent,
-  formatUsd,
+  formatPercent
 } from "@/lib/format";
 
 export type UserRow = {

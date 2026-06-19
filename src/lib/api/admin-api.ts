@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig } from "axios";
+import { attachUnauthorizedRedirect } from "@/lib/auth/unauthorized-client";
 import { ApiError } from "@/lib/api/errors";
 
 const adminClient = axios.create({
@@ -7,6 +8,8 @@ const adminClient = axios.create({
     "Content-Type": "application/json"
   }
 });
+
+attachUnauthorizedRedirect(adminClient);
 
 export async function adminApiRequest<T>(config: AxiosRequestConfig): Promise<T> {
   try {

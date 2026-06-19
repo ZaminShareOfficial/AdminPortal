@@ -1,5 +1,6 @@
 import { FinanceContent } from "@/components/finance/finance-content";
 import { getErrorMessage } from "@/lib/api/errors";
+import { guardUnauthorized } from "@/lib/auth/unauthorized";
 import { formatPaise } from "@/lib/format";
 import {
   mapPortfolioToFinanceRow,
@@ -22,6 +23,7 @@ export default async function FinancePage() {
       />
     );
   } catch (error) {
+    await guardUnauthorized(error);
     return (
       <FinanceContent
         totalInvested="—"

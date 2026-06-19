@@ -2,6 +2,7 @@
 
 import axios, { type AxiosRequestConfig } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { attachUnauthorizedRedirect } from "@/lib/auth/unauthorized-client";
 import { ApiError } from "@/lib/api/errors";
 
 type UseAxiosOptions = Omit<AxiosRequestConfig, "url"> & {
@@ -23,6 +24,8 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+attachUnauthorizedRedirect(apiClient);
 
 function toApiError(error: unknown): string {
   if (axios.isAxiosError(error)) {

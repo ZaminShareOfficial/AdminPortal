@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { SESSION_COOKIE } from "@/lib/auth/cookie";
+import { isUnauthorizedError } from "@/lib/auth/unauthorized";
 import { apiFetch } from "@/lib/api/server-client";
 import { ApiError, getErrorMessage } from "@/lib/api/errors";
 
@@ -52,10 +54,16 @@ export function createAdminRouteHandler<T>({
       return NextResponse.json(data ?? { ok: true });
     } catch (error) {
       const status = error instanceof ApiError ? error.status : 500;
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: getErrorMessage(error) },
         { status },
       );
+
+      if (isUnauthorizedError(error)) {
+        response.cookies.delete(SESSION_COOKIE);
+      }
+
+      return response;
     }
   };
 }

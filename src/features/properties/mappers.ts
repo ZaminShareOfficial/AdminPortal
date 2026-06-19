@@ -9,7 +9,7 @@ import {
   LONGITUDE_MAX,
   LONGITUDE_MIN
 } from "@/constants/property";
-import { parseDollarInput, parseDollarsToPaise } from "@/lib/format";
+import { parseInrInput, parseInrToPaise } from "@/lib/format";
 import { parsePropertyType } from "@/lib/validators/property";
 import type {
   PropertyCreateFormValues,
@@ -124,7 +124,7 @@ export const computeDerivedTokenPrice = (
   valuation: string,
   tokenSupply: string,
 ): string | null => {
-  const valuationAmount = parseDollarInput(valuation);
+  const valuationAmount = parseInrInput(valuation);
   const supply = Number(tokenSupply);
 
   if (valuationAmount == null || Number.isNaN(supply) || supply <= 0) {
@@ -147,8 +147,8 @@ export const validatePropertyForm = (
     errors.location = "Location is required.";
   }
 
-  if (parseDollarInput(form.valuation) == null) {
-    errors.valuation = "Enter a valid valuation in USD.";
+  if (parseInrInput(form.valuation) == null) {
+    errors.valuation = "Enter a valid valuation in INR.";
   }
 
   const tokenSupply = Number(form.tokenSupply);
@@ -156,8 +156,8 @@ export const validatePropertyForm = (
     errors.tokenSupply = "Enter a valid token supply.";
   }
 
-  if (parseDollarInput(form.tokenPrice) == null) {
-    errors.tokenPrice = "Enter a valid token price in USD.";
+  if (parseInrInput(form.tokenPrice) == null) {
+    errors.tokenPrice = "Enter a valid token price in INR.";
   }
 
   const hasLatitude = Boolean(form.latitude.trim());
@@ -189,8 +189,8 @@ export const validatePropertyForm = (
 export const formToCreatePayload = (
   form: PropertyCreateFormValues,
 ): CreatePropertyRequest => {
-  const valuation = parseDollarsToPaise(form.valuation);
-  const tokenPrice = parseDollarsToPaise(form.tokenPrice);
+  const valuation = parseInrToPaise(form.valuation);
+  const tokenPrice = parseInrToPaise(form.tokenPrice);
   const tokenSupply = Number(form.tokenSupply);
 
   if (!form.title.trim() || !form.location.trim()) {
@@ -213,8 +213,8 @@ export const formToCreatePayload = (
 export const formToUpdatePayload = (
   form: PropertyCreateFormValues,
 ): UpdatePropertyRequest => {
-  const valuation = parseDollarsToPaise(form.valuation);
-  const tokenPrice = parseDollarsToPaise(form.tokenPrice);
+  const valuation = parseInrToPaise(form.valuation);
+  const tokenPrice = parseInrToPaise(form.tokenPrice);
   const tokenSupply = Number(form.tokenSupply);
 
   return {
