@@ -8,7 +8,7 @@ import { IpoInspectorPanel } from "@/features/ipo/components/ipo-inspector-panel
 import { IpoTable } from "@/features/ipo/components/ipo-table";
 import { useIpoActions } from "@/features/ipo/use-ipo-actions";
 import { useIpoList } from "@/features/ipo/use-ipo-list";
-import { useIpoDetails } from "@/features/ipo/use-ipo-details";
+import { useIpoSubscriptions } from "@/features/ipo/use-ipo-subscriptions";
 import { mapIpoToRow } from "@/lib/mappers/ipo";
 
 export function IpoContent() {
@@ -26,7 +26,7 @@ export function IpoContent() {
     () => ipoRecords.map((ipo) => ipo.ipoId),
     [ipoRecords],
   );
-  const { details, isLoading: isDetailsLoading } = useIpoDetails(
+  const { summaries, isLoading: isSubscriptionsLoading } = useIpoSubscriptions(
     ipoIds,
     listRevision,
   );
@@ -35,11 +35,11 @@ export function IpoContent() {
       ipoRecords.map((ipo) =>
         mapIpoToRow(
           ipo,
-          details[ipo.ipoId],
-          isDetailsLoading && !details[ipo.ipoId],
+          summaries[ipo.ipoId],
+          isSubscriptionsLoading && !summaries[ipo.ipoId],
         ),
       ),
-    [ipoRecords, details, isDetailsLoading],
+    [ipoRecords, summaries, isSubscriptionsLoading],
   );
 
   const selectedIpo = useMemo(
@@ -128,11 +128,11 @@ export function IpoContent() {
             </span>
             <IpoInspectorPanel
               ipo={selectedIpo}
-              detail={selectedIpo ? details[selectedIpo.ipoId] : null}
-              isDetailLoading={
-                isDetailsLoading &&
+              subscription={selectedIpo ? summaries[selectedIpo.ipoId] : null}
+              isSubscriptionLoading={
+                isSubscriptionsLoading &&
                 selectedIpo != null &&
-                !details[selectedIpo.ipoId]
+                !summaries[selectedIpo.ipoId]
               }
               ipoActions={ipoActions}
             />

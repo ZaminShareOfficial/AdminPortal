@@ -186,6 +186,13 @@ export type MintIpoResponse = {
   refundedSubscribers: number | null;
 };
 
+export type IpoSubscriptionSummaryResponse = {
+  ipoId: string;
+  totalTokens: number;
+  subscribedTokens: number;
+  subscriptionPercent: number;
+};
+
 export type PropertyType =
   | "RESIDENTIAL"
   | "COMMERCIAL"

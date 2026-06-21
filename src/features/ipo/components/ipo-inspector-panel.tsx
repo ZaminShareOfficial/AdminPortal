@@ -7,22 +7,25 @@ import type { IpoActions } from "@/features/ipo/use-ipo-actions";
 import { getIpoToggleTarget, canMintIpo } from "@/features/ipo/utils";
 import { IpoSubscriptionBar } from "@/features/ipo/components/ipo-subscription-bar";
 import { mapIpoToRow } from "@/lib/mappers/ipo";
-import type { IpoDetailResponse, IpoSummaryResponse } from "@/types/backend";
+import type {
+  IpoSubscriptionSummaryResponse,
+  IpoSummaryResponse
+} from "@/types/backend";
 
 const placeholderImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCu1lg4swJwDIAlT-bJscsUntDuZgsX4bx-xwlAP87m1nYpEiXjOlk3SHwdhtfG71K9s8zDXsE-6oi4LmiJt6wwRIMJZjYP-f5ZjAEOALLKA4ysoWI3HVbBgguLrkJc86iZ3Utaw7Gj0qRtNpbNWgqWA44_Yl_SviHd2Bngw1W7cALociJLNDYPUyE365lIc5YLUHxqXXIcJWktcTmStfDcTbMjeDh47Nz6qu7Zt_vyfNJ3EzY-_e2x-yvALF6RSk1qTp54fHjYFm8J";
 
 type IpoInspectorPanelProps = {
   ipo: IpoSummaryResponse | null;
-  detail: IpoDetailResponse | null | undefined;
-  isDetailLoading: boolean;
+  subscription: IpoSubscriptionSummaryResponse | null | undefined;
+  isSubscriptionLoading: boolean;
   ipoActions: IpoActions;
 };
 
 export const IpoInspectorPanel = ({
   ipo,
-  detail,
-  isDetailLoading,
+  subscription,
+  isSubscriptionLoading,
   ipoActions
 }: IpoInspectorPanelProps) => {
   const {
@@ -42,7 +45,7 @@ export const IpoInspectorPanel = ({
     );
   }
 
-  const row = mapIpoToRow(ipo, detail, isDetailLoading);
+  const row = mapIpoToRow(ipo, subscription, isSubscriptionLoading);
   const toggleTarget = getIpoToggleTarget(ipo.status);
   const isPaused = ipo.status === "PAUSED";
   const canToggle = toggleTarget != null;

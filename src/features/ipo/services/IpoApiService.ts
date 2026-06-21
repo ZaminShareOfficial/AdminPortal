@@ -1,8 +1,8 @@
 import type {
   CreateIpoRequest,
   CreateIpoResponse,
-  IpoDetailResponse,
   IpoStatusResponse,
+  IpoSubscriptionSummaryResponse,
   IpoSummaryResponse,
   MintIpoResponse,
   UpdateIpoStatusRequest
@@ -35,8 +35,8 @@ export const mintIpo = (ipoId: string) =>
     url: `/ipos/${ipoId}/mint`
   });
 
-export const getIpoDetail = (ipoId: string) =>
-  adminApiRequest<IpoDetailResponse>({
+export const getIpoSubscriptionSummary = (ipoId: string) =>
+  adminApiRequest<IpoSubscriptionSummaryResponse>({
     method: "GET",
-    url: `/ipos/${ipoId}`
+    url: `/ipos/${ipoId}/subscriptions`
   });

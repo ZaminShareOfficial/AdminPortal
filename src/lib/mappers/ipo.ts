@@ -1,4 +1,7 @@
-import type { IpoDetailResponse, IpoSummaryResponse } from "@/types/backend";
+import type {
+  IpoSubscriptionSummaryResponse,
+  IpoSummaryResponse
+} from "@/types/backend";
 import { formatNumber, formatPaise } from "@/lib/format";
 
 export type IpoRow = {
@@ -67,51 +70,33 @@ export const normalizeSubscriptionPercent = (
   return Math.min(100, Math.max(0, Math.round(percent)));
 };
 
-export const computeSubscriptionPercent = (
-  subscribedTokens: number | null | undefined,
-  totalTokens: number | null | undefined,
-): number => {
-  if (
-    subscribedTokens == null ||
-    totalTokens == null ||
-    totalTokens <= 0
-  ) {
-    return 0;
-  }
-
-  return normalizeSubscriptionPercent(subscribedTokens / totalTokens);
-};
-
-export const mapIpoDetailToProgress = (
-  detail: IpoDetailResponse | null | undefined,
+export const mapSubscriptionToProgress = (
+  summary: IpoSubscriptionSummaryResponse | null | undefined,
   isLoading = false,
 ) => {
-  if (isLoading && !detail) {
+  if (isLoading && !summary) {
     return { progress: 0, progressLabel: "Loading..." };
   }
 
-  if (!detail) {
+  if (!summary) {
     return { progress: 0, progressLabel: "Unavailable" };
   }
 
   return {
-    progress: computeSubscriptionPercent(
-      detail.subscribedTokens,
-      detail.totalTokens,
-    ),
-    progressLabel: `${formatNumber(detail.subscribedTokens)} / ${formatNumber(detail.totalTokens)}`
+    progress: normalizeSubscriptionPercent(summary.subscriptionPercent),
+    progressLabel: `${formatNumber(summary.subscribedTokens)} / ${formatNumber(summary.totalTokens)}`
   };
 };
 
 export function mapIpoToRow(
   ipo: IpoSummaryResponse,
-  detail?: IpoDetailResponse | null,
-  isDetailLoading = false,
+  subscription?: IpoSubscriptionSummaryResponse | null,
+  isSubscriptionLoading = false,
 ): IpoRow {
   const status = mapIpoStatus(ipo.status);
-  const subscriptionProgress = mapIpoDetailToProgress(
-    detail,
-    isDetailLoading,
+  const subscriptionProgress = mapSubscriptionToProgress(
+    subscription,
+    isSubscriptionLoading,
   );
 
   return {

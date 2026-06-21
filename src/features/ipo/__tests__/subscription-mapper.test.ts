@@ -1,6 +1,5 @@
 import {
-  computeSubscriptionPercent,
-  mapIpoDetailToProgress,
+  mapSubscriptionToProgress,
   normalizeSubscriptionPercent
 } from "@/lib/mappers/ipo";
 
@@ -16,26 +15,13 @@ describe("normalizeSubscriptionPercent", () => {
   });
 });
 
-describe("computeSubscriptionPercent", () => {
-  it("derives percent from subscribed and total tokens", () => {
-    expect(computeSubscriptionPercent(250, 1000)).toBe(25);
-  });
-
-  it("returns zero when total tokens are missing or zero", () => {
-    expect(computeSubscriptionPercent(250, 0)).toBe(0);
-    expect(computeSubscriptionPercent(null, 1000)).toBe(0);
-  });
-});
-
-describe("mapIpoDetailToProgress", () => {
-  it("maps IPO detail to progress bar values", () => {
-    const result = mapIpoDetailToProgress({
-      id: "ipo-1",
-      propertyId: "prop-1",
-      status: "CREATED",
-      tokenPrice: 10000,
+describe("mapSubscriptionToProgress", () => {
+  it("maps admin subscription summary to progress bar values", () => {
+    const result = mapSubscriptionToProgress({
+      ipoId: "ipo-1",
       totalTokens: 1000,
-      subscribedTokens: 250
+      subscribedTokens: 250,
+      subscriptionPercent: 0.25
     });
 
     expect(result).toEqual({
@@ -44,15 +30,15 @@ describe("mapIpoDetailToProgress", () => {
     });
   });
 
-  it("shows loading label while detail is pending", () => {
-    expect(mapIpoDetailToProgress(null, true)).toEqual({
+  it("shows loading label while subscription data is pending", () => {
+    expect(mapSubscriptionToProgress(null, true)).toEqual({
       progress: 0,
       progressLabel: "Loading..."
     });
   });
 
   it("shows unavailable when fetch failed", () => {
-    expect(mapIpoDetailToProgress(null, false)).toEqual({
+    expect(mapSubscriptionToProgress(null, false)).toEqual({
       progress: 0,
       progressLabel: "Unavailable"
     });
