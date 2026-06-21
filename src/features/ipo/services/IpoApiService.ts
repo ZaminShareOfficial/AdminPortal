@@ -1,7 +1,11 @@
 import type {
   CreateIpoRequest,
   CreateIpoResponse,
-  IpoSummaryResponse
+  IpoDetailResponse,
+  IpoStatusResponse,
+  IpoSummaryResponse,
+  MintIpoResponse,
+  UpdateIpoStatusRequest
 } from "@/types/backend";
 import { adminApiRequest } from "@/lib/api/admin-api";
 
@@ -16,4 +20,23 @@ export const createIpo = (body: CreateIpoRequest) =>
     method: "POST",
     url: "/ipos",
     data: body
+  });
+
+export const updateIpoStatus = (ipoId: string, body: UpdateIpoStatusRequest) =>
+  adminApiRequest<IpoStatusResponse>({
+    method: "PATCH",
+    url: `/ipos/${ipoId}/status`,
+    data: body
+  });
+
+export const mintIpo = (ipoId: string) =>
+  adminApiRequest<MintIpoResponse>({
+    method: "POST",
+    url: `/ipos/${ipoId}/mint`
+  });
+
+export const getIpoDetail = (ipoId: string) =>
+  adminApiRequest<IpoDetailResponse>({
+    method: "GET",
+    url: `/ipos/${ipoId}`
   });

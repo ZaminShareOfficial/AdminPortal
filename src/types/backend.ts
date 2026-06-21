@@ -169,6 +169,23 @@ export type CreateIpoResponse = {
   status: IpoStatus;
 };
 
+export type UpdateIpoStatusRequest = {
+  status: IpoStatus;
+};
+
+export type IpoStatusResponse = {
+  ipoId: string;
+  status: IpoStatus;
+};
+
+export type MintIpoResponse = {
+  ipoId: string;
+  status: IpoStatus;
+  totalTokens: number | null;
+  allottedSubscribers: number | null;
+  refundedSubscribers: number | null;
+};
+
 export type PropertyType =
   | "RESIDENTIAL"
   | "COMMERCIAL"
