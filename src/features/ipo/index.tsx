@@ -1,22 +1,31 @@
+"use client";
+
 import Image from "next/image";
 import { Icon } from "@/components/admin/icon";
 import { ApiErrorBanner } from "@/components/admin/api-error-banner";
-import type { IpoRow } from "@/lib/mappers/ipo";
+import { LaunchIpoTrigger } from "@/features/ipo/components/create-ipo-modal";
+import { useIpoActions } from "@/features/ipo/use-ipo-actions";
+import { useIpoList } from "@/features/ipo/use-ipo-list";
+import type { IpoContentProps } from "@/features/ipo/types";
+import { mapIpoToRow } from "@/lib/mappers/ipo";
 
 const placeholderImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCu1lg4swJwDIAlT-bJscsUntDuZgsX4bx-xwlAP87m1nYpEiXjOlk3SHwdhtfG71K9s8zDXsE-6oi4LmiJt6wwRIMJZjYP-f5ZjAEOALLKA4ysoWI3HVbBgguLrkJc86iZ3Utaw7Gj0qRtNpbNWgqWA44_Yl_SviHd2Bngw1W7cALociJLNDYPUyE365lIc5YLUHxqXXIcJWktcTmStfDcTbMjeDh47Nz6qu7Zt_vyfNJ3EzY-_e2x-yvALF6RSk1qTp54fHjYFm8J";
 
-type IpoContentProps = {
-  ipos: IpoRow[];
-  error?: string | null;
-};
+export function IpoContent({
+  initialIpos,
+  error = null
+}: IpoContentProps) {
+  const { ipos: ipoRecords, refetchIpos, isRefetching, refetchError } =
+    useIpoList(initialIpos);
+  const ipoActions = useIpoActions(refetchIpos);
+  const ipos = ipoRecords.map(mapIpoToRow);
 
-export function IpoContent({ ipos, error = null }: IpoContentProps) {
   const stats = [
     { label: "Listed IPOs", value: String(ipos.length), change: "Live", sub: "GET /ipos", icon: "analytics", changeColor: "text-tertiary" },
     { label: "Open", value: String(ipos.filter((ipo) => ipo.status === "Open").length), change: "CREATED", sub: "status filter", icon: "timer", changeColor: "text-secondary" },
     { label: "Paused", value: String(ipos.filter((ipo) => ipo.status === "Paused").length), change: "PAUSED", sub: "status filter", icon: "verified_user", changeColor: "text-on-surface-variant" },
-    { label: "Minted", value: String(ipos.filter((ipo) => ipo.status === "Minted").length), change: "MINTED", sub: "status filter", icon: "account_balance_wallet", changeColor: "text-tertiary" },
+    { label: "Minted", value: String(ipos.filter((ipo) => ipo.status === "Minted").length), change: "MINTED", sub: "status filter", icon: "account_balance_wallet", changeColor: "text-tertiary" }
   ];
 
   return (
@@ -35,14 +44,12 @@ export function IpoContent({ ipos, error = null }: IpoContentProps) {
             <Icon name="history" className="text-primary" />
             View Logs
           </button>
-          <button type="button" className="saffron-gradient shadow-primary-soft flex items-center gap-2 rounded px-6 py-2.5 text-sm font-bold text-on-primary-fixed transition-all hover:brightness-110">
-            <Icon name="rocket_launch" filled className="text-primary" />
-            Launch New IPO
-          </button>
+          <LaunchIpoTrigger ipoActions={ipoActions} />
         </div>
       </div>
 
       {error ? <ApiErrorBanner message={error} /> : null}
+      {refetchError ? <ApiErrorBanner message={refetchError} /> : null}
 
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 space-y-4 lg:col-span-8">
@@ -50,7 +57,7 @@ export function IpoContent({ ipos, error = null }: IpoContentProps) {
             <div className="flex items-center gap-4">
               <h2 className="font-headline text-lg font-bold">Live & Pending IPOs</h2>
               <span className="rounded bg-primary-container/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                {ipos.length} LISTED
+                {ipos.length} LISTED{isRefetching ? " · REFRESHING" : ""}
               </span>
             </div>
             <div className="flex gap-2 text-on-surface-variant">

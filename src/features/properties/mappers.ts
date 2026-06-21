@@ -7,7 +7,9 @@ import {
   LATITUDE_MAX,
   LATITUDE_MIN,
   LONGITUDE_MAX,
-  LONGITUDE_MIN
+  LONGITUDE_MIN,
+  normalizePropertyStatusForForm,
+  PROPERTY_STATUS
 } from "@/constants/property";
 import { parseInrInput, parseInrToPaise } from "@/lib/format";
 import {
@@ -35,7 +37,7 @@ export const emptyPropertyForm = (): PropertyCreateFormValues => ({
   documents: "",
   listingBroker: "",
   propertyType: "RESIDENTIAL",
-  status: "DRAFT"
+  status: PROPERTY_STATUS.DRAFT
 });
 
 export const propertyToForm = (
@@ -60,7 +62,7 @@ export const propertyToForm = (
   documents: urlListToText(property.documents),
   listingBroker: property.listingBroker ?? "",
   propertyType: property.propertyType ?? "RESIDENTIAL",
-  status: property.status ?? "DRAFT"
+  status: normalizePropertyStatusForForm(property.status ?? PROPERTY_STATUS.DRAFT)
 });
 
 export { parseUrlList } from "@/lib/url-list";

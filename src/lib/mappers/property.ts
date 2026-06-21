@@ -1,7 +1,8 @@
 import type { PropertyResponse } from "@/types/backend";
+import { getPropertyStatusLabel } from "@/constants/property";
 import { formatNumber, formatPaise } from "@/lib/format";
 
-export type PropertyRowStatus = "Draft" | "Created" | "IPO" | "Listed";
+export type PropertyRowStatus = "Draft" | "Approved" | "IPO" | "Listed";
 
 export type PropertyRow = {
   id: string;
@@ -18,7 +19,7 @@ export type PropertyRow = {
 const statusStyles: Record<PropertyRowStatus, string> = {
   Draft:
     "border border-outline-variant/20 bg-surface-container-high text-on-surface-variant",
-  Created:
+  Approved:
     "border border-secondary/20 bg-secondary-container/20 text-secondary",
   IPO: "border border-tertiary/20 bg-tertiary/10 text-tertiary",
   Listed: "border border-primary/20 bg-primary-container/20 text-primary"
@@ -27,17 +28,7 @@ const statusStyles: Record<PropertyRowStatus, string> = {
 export function mapPropertyStatus(
   status: PropertyResponse["status"],
 ): PropertyRowStatus {
-  switch (status) {
-    case "CREATED":
-      return "Created";
-    case "IPO":
-      return "IPO";
-    case "LISTED":
-      return "Listed";
-    case "DRAFT":
-    default:
-      return "Draft";
-  }
+  return getPropertyStatusLabel(status) as PropertyRowStatus;
 }
 
 export function mapPropertyToRow(property: PropertyResponse): PropertyRow {
@@ -49,7 +40,7 @@ export function mapPropertyToRow(property: PropertyResponse): PropertyRow {
     brokerLink: Boolean(property.listingBroker),
     tokens: formatNumber(property.tokenSupply),
     price: formatPaise(property.valuation),
-    status: mapPropertyStatus(property.status),
+    status: mapPropertyStatus(property.status)
   };
 }
 
@@ -62,7 +53,7 @@ export function mapPropertyToDetail(property: PropertyResponse) {
     valuation: formatPaise(property.valuation),
     tokenSupply: formatNumber(property.tokenSupply),
     tokenPrice: formatPaise(property.tokenPrice),
-    status: mapPropertyStatus(property.status),
+    status: mapPropertyStatus(property.status)
   };
 }
 
