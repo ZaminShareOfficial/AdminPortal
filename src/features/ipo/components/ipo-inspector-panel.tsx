@@ -101,6 +101,20 @@ export const IpoInspectorPanel = ({
           </p>
         </div>
       </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="rounded bg-surface-container-low p-3">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+            Start Time
+          </p>
+          <p className="text-sm font-medium text-on-surface">{row.startTime}</p>
+        </div>
+        <div className="rounded bg-surface-container-low p-3">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+            End Time
+          </p>
+          <p className="text-sm font-medium text-on-surface">{row.endTime}</p>
+        </div>
+      </div>
       <div className="space-y-3">
         <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
           Subscription

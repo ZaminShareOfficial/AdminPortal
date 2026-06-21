@@ -18,6 +18,7 @@ const TABLE_HEADERS = [
   "Property",
   "Token Supply",
   "Price (INR)",
+  "Schedule",
   "Subscription",
   "Status",
   "Actions"
@@ -26,14 +27,14 @@ const TABLE_HEADERS = [
 export const IpoTable = ({ ipos, selectedId, onSelect }: IpoTableProps) => (
   <div className="overflow-hidden rounded-lg border border-outline-variant/5 bg-surface-container">
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[900px] border-collapse text-left">
+      <table className="w-full min-w-[1100px] border-collapse text-left">
       <thead>
         <tr className="border-b border-outline-variant/10 bg-surface-container-low">
           {TABLE_HEADERS.map((header, index) => (
             <th
               key={header}
               scope="col"
-              className={`px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ${index === 0 ? "px-6" : ""} ${index === 5 ? "px-6 text-right" : ""} ${index === 3 ? "w-48" : ""}`}
+              className={`px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ${index === 0 ? "px-6" : ""} ${index === 6 ? "px-6 text-right" : ""} ${index === 4 ? "w-48" : ""}`}
             >
               {header}
             </th>
@@ -44,7 +45,7 @@ export const IpoTable = ({ ipos, selectedId, onSelect }: IpoTableProps) => (
         {ipos.length === 0 ? (
           <tr>
             <td
-              colSpan={6}
+              colSpan={7}
               className="px-6 py-10 text-center text-sm text-on-surface-variant"
             >
               No IPOs returned from the backend yet.
@@ -92,6 +93,22 @@ export const IpoTable = ({ ipos, selectedId, onSelect }: IpoTableProps) => (
                   className={`px-4 py-5 font-mono text-xs ${ipo.dimmed ? "opacity-60" : ""}`}
                 >
                   {ipo.price}
+                </td>
+                <td className={`px-4 py-5 ${ipo.dimmed ? "opacity-60" : ""}`}>
+                  <div className="space-y-1 text-xs">
+                    <p>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+                        Start{" "}
+                      </span>
+                      <span className="text-on-surface">{ipo.startTime}</span>
+                    </p>
+                    <p>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+                        End{" "}
+                      </span>
+                      <span className="text-on-surface-variant">{ipo.endTime}</span>
+                    </p>
+                  </div>
                 </td>
                 <td className={`px-4 py-5 ${ipo.dimmed ? "opacity-60" : ""}`}>
                   <IpoSubscriptionBar

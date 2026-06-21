@@ -2,7 +2,7 @@ import type {
   IpoSubscriptionSummaryResponse,
   IpoSummaryResponse
 } from "@/types/backend";
-import { formatNumber, formatPaise } from "@/lib/format";
+import { formatDateTime, formatNumber, formatPaise } from "@/lib/format";
 
 export type IpoRow = {
   name: string;
@@ -10,6 +10,8 @@ export type IpoRow = {
   location: string;
   supply: string;
   price: string;
+  startTime: string;
+  endTime: string;
   progress: number;
   progressLabel: string;
   status: string;
@@ -105,6 +107,8 @@ export function mapIpoToRow(
     location: ipo.propertyLocation,
     supply: formatNumber(ipo.totalTokens),
     price: formatPaise(ipo.tokenPrice),
+    startTime: formatDateTime(ipo.startTime),
+    endTime: formatDateTime(ipo.endTime),
     progress: subscriptionProgress.progress,
     progressLabel: subscriptionProgress.progressLabel,
     status: status.label,
