@@ -221,3 +221,45 @@ export type CreatePropertyRequest = {
 };
 
 export type UpdatePropertyRequest = Partial<CreatePropertyRequest>;
+
+export type TradeResponse = {
+  tradeId: string;
+  propertyId: string;
+  quantity: number | null;
+  price: number | null;
+  amount: number | null;
+  side: OrderSide;
+  counterOrderId?: string | null;
+  createdAt?: string | null;
+};
+
+export type KycStatusResponse = {
+  kycStatus?: string;
+  verificationStatus?: string;
+  maskedPan?: string;
+  kycType?: string;
+  provider?: string;
+  reason?: string;
+  verifiedAt?: string;
+};
+
+export type TemplateRequest = {
+  templateName: string;
+  templateString: string;
+};
+
+export type TemplateResponse = {
+  templateId: string;
+};
+
+export type SendNotificationRequest = {
+  templateName: string;
+  parameters?: Record<string, string>;
+  identityType: "PHONE_NUMBER" | "EMAIL";
+  identityValue: string;
+};
+
+export type SendNotificationResponse = {
+  requestId: string;
+  status: "PENDING" | "SUCCESS" | "FAILED";
+};

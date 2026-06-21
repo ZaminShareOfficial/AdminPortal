@@ -1,4 +1,5 @@
 export type SurveillanceOrderRow = {
+  orderId: string;
   id: string;
   user: string;
   initials: string;
