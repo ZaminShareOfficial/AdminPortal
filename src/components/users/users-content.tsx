@@ -72,7 +72,7 @@ export function UsersContent({
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
+          <table className="w-full min-w-[900px] border-collapse text-left">
             <thead>
               <tr className="bg-surface-container-lowest/50">
                 {[

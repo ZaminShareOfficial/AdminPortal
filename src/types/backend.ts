@@ -1,4 +1,10 @@
-export type PropertyStatus = "DRAFT" | "CREATED" | "IPO" | "LISTED";
+export type PropertyStatus =
+  | "DRAFT"
+  | "APPROVED"
+  | "IPO_OPEN"
+  | "IPO_PAUSE"
+  | "IPO_CLOSED"
+  | "TRADING";
 
 export type PropertyResponse = {
   id: string;
@@ -149,6 +155,42 @@ export type IpoDetailResponse = {
   subscribedTokens?: number | null;
   startTime?: string | null;
   endTime?: string | null;
+};
+
+export type CreateIpoRequest = {
+  propertyId: string;
+  startTime: string;
+  endTime: string;
+};
+
+export type CreateIpoResponse = {
+  propertyId: string;
+  ipoId: string;
+  status: IpoStatus;
+};
+
+export type UpdateIpoStatusRequest = {
+  status: IpoStatus;
+};
+
+export type IpoStatusResponse = {
+  ipoId: string;
+  status: IpoStatus;
+};
+
+export type MintIpoResponse = {
+  ipoId: string;
+  status: IpoStatus;
+  totalTokens: number | null;
+  allottedSubscribers: number | null;
+  refundedSubscribers: number | null;
+};
+
+export type IpoSubscriptionSummaryResponse = {
+  ipoId: string;
+  totalTokens: number;
+  subscribedTokens: number;
+  subscriptionPercent: number;
 };
 
 export type PropertyType =

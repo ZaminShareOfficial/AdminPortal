@@ -15,7 +15,7 @@ export function OrdersContent({
 }: OrdersContentProps) {
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
-      <div className="hide-scrollbar flex flex-1 flex-col gap-6 overflow-y-auto p-8">
+      <div className="hide-scrollbar flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto p-8">
         <OrdersHeader />
 
         {error ? <ApiErrorBanner message={error} /> : null}

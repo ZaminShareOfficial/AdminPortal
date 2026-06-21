@@ -36,6 +36,22 @@ export function formatNumber(value: number | null | undefined) {
   return new Intl.NumberFormat("en-IN").format(value);
 }
 
+export function formatDateTime(value: string | null | undefined) {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
+
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(date);
+}
+
 /** Parse an INR input string into backend paise (1/100 currency unit). */
 export function parseInrToPaise(value: string): number | null {
   const normalized = value.replace(/[^0-9.]/g, "");

@@ -54,7 +54,7 @@ export const API_ENDPOINTS = {
 export const SCREEN_API_MAP = {
   dashboard: ["properties.list", "ipo.list", "orders.bulletin", "portfolio.allUsers"],
   properties: ["properties.list"],
-  ipo: ["ipo.list"],
+  ipo: ["ipo.list", "properties.list"],
   orders: ["orders.bulletin", "orders.orderBook"],
   users: ["portfolio.allUsers"],
   finance: ["portfolio.allUsers"],

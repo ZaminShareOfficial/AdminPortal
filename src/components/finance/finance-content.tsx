@@ -86,7 +86,7 @@ export function FinanceContent({
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
+          <table className="w-full min-w-[800px] border-collapse text-left">
             <thead>
               <tr className="bg-surface-container-low">
                 {["Investor", "Holdings", "Invested", "Gain / Loss", "Status", "Actions"].map((h, i) => (

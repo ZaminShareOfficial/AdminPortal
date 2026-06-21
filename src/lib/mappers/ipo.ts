@@ -1,5 +1,8 @@
-import type { IpoSummaryResponse } from "@/types/backend";
-import { formatNumber, formatPaise } from "@/lib/format";
+import type {
+  IpoSubscriptionSummaryResponse,
+  IpoSummaryResponse
+} from "@/types/backend";
+import { formatDateTime, formatNumber, formatPaise } from "@/lib/format";
 
 export type IpoRow = {
   name: string;
@@ -7,6 +10,8 @@ export type IpoRow = {
   location: string;
   supply: string;
   price: string;
+  startTime: string;
+  endTime: string;
   progress: number;
   progressLabel: string;
   status: string;
@@ -56,8 +61,45 @@ function mapIpoStatus(status: IpoSummaryResponse["status"]) {
   }
 }
 
-export function mapIpoToRow(ipo: IpoSummaryResponse): IpoRow {
+export const normalizeSubscriptionPercent = (
+  subscriptionPercent: number,
+): number => {
+  const percent =
+    subscriptionPercent <= 1
+      ? subscriptionPercent * 100
+      : subscriptionPercent;
+
+  return Math.min(100, Math.max(0, Math.round(percent)));
+};
+
+export const mapSubscriptionToProgress = (
+  summary: IpoSubscriptionSummaryResponse | null | undefined,
+  isLoading = false,
+) => {
+  if (isLoading && !summary) {
+    return { progress: 0, progressLabel: "Loading..." };
+  }
+
+  if (!summary) {
+    return { progress: 0, progressLabel: "Unavailable" };
+  }
+
+  return {
+    progress: normalizeSubscriptionPercent(summary.subscriptionPercent),
+    progressLabel: `${formatNumber(summary.subscribedTokens)} / ${formatNumber(summary.totalTokens)}`
+  };
+};
+
+export function mapIpoToRow(
+  ipo: IpoSummaryResponse,
+  subscription?: IpoSubscriptionSummaryResponse | null,
+  isSubscriptionLoading = false,
+): IpoRow {
   const status = mapIpoStatus(ipo.status);
+  const subscriptionProgress = mapSubscriptionToProgress(
+    subscription,
+    isSubscriptionLoading,
+  );
 
   return {
     name: ipo.propertyTitle,
@@ -65,8 +107,10 @@ export function mapIpoToRow(ipo: IpoSummaryResponse): IpoRow {
     location: ipo.propertyLocation,
     supply: formatNumber(ipo.totalTokens),
     price: formatPaise(ipo.tokenPrice),
-    progress: 0,
-    progressLabel: "Live data pending",
+    startTime: formatDateTime(ipo.startTime),
+    endTime: formatDateTime(ipo.endTime),
+    progress: subscriptionProgress.progress,
+    progressLabel: subscriptionProgress.progressLabel,
     status: status.label,
     statusColor: status.statusColor,
     dotColor: status.dotColor,

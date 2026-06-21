@@ -1,5 +1,5 @@
 import type { EnumSelectOption } from "@/components/admin/enum-select";
-import type { PropertyType } from "@/types/backend";
+import type { PropertyStatus, PropertyType } from "@/types/backend";
 
 export const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
   { value: "RESIDENTIAL", label: "Residential" },
@@ -9,12 +9,68 @@ export const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
   { value: "PLOT", label: "Plot" }
 ];
 
+/** All backend API status values. */
+export const PROPERTY_STATUS = {
+  DRAFT: "DRAFT",
+  APPROVED: "APPROVED",
+  IPO_OPEN: "IPO_OPEN",
+  IPO_PAUSE: "IPO_PAUSE",
+  IPO_CLOSED: "IPO_CLOSED",
+  TRADING: "TRADING"
+} as const satisfies Record<string, PropertyStatus>;
+
+/** Four admin-selectable statuses — values sent in payloads. */
 export const PROPERTY_STATUS_OPTIONS = [
-  { value: "DRAFT", label: "Draft" },
-  { value: "CREATED", label: "Created" },
-  { value: "IPO", label: "IPO" },
-  { value: "LISTED", label: "Listed" }
+  { value: PROPERTY_STATUS.DRAFT, label: "Draft" },
+  { value: PROPERTY_STATUS.APPROVED, label: "Approved" },
+  { value: PROPERTY_STATUS.IPO_OPEN, label: "IPO" },
+  { value: PROPERTY_STATUS.TRADING, label: "Listed" }
 ] as const;
+
+export type PropertyFormStatus = (typeof PROPERTY_STATUS_OPTIONS)[number]["value"];
+
+const displayLabels: Record<PropertyFormStatus, string> = {
+  DRAFT: "Draft",
+  APPROVED: "Approved",
+  IPO_OPEN: "IPO",
+  TRADING: "Listed"
+};
+
+export const getPropertyStatusLabel = (status: PropertyStatus): string => {
+  switch (status) {
+    case PROPERTY_STATUS.DRAFT:
+      return displayLabels.DRAFT;
+    case PROPERTY_STATUS.APPROVED:
+      return displayLabels.APPROVED;
+    case PROPERTY_STATUS.IPO_OPEN:
+    case PROPERTY_STATUS.IPO_PAUSE:
+    case PROPERTY_STATUS.IPO_CLOSED:
+      return displayLabels.IPO_OPEN;
+    case PROPERTY_STATUS.TRADING:
+      return displayLabels.TRADING;
+    default:
+      return status;
+  }
+};
+
+export const normalizePropertyStatusForForm = (
+  status: PropertyStatus,
+): PropertyFormStatus => {
+  switch (status) {
+    case PROPERTY_STATUS.DRAFT:
+      return PROPERTY_STATUS.DRAFT;
+    case PROPERTY_STATUS.APPROVED:
+      return PROPERTY_STATUS.APPROVED;
+    case PROPERTY_STATUS.IPO_OPEN:
+    case PROPERTY_STATUS.IPO_PAUSE:
+    case PROPERTY_STATUS.IPO_CLOSED:
+      return PROPERTY_STATUS.IPO_OPEN;
+    case PROPERTY_STATUS.TRADING:
+      return PROPERTY_STATUS.TRADING;
+    default:
+      return PROPERTY_STATUS.DRAFT;
+  }
+};
 
 export const PROPERTY_TYPE_SELECT_OPTIONS: EnumSelectOption[] = PROPERTY_TYPES.map(
   (type) => ({
