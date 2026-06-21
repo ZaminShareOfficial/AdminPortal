@@ -20,7 +20,7 @@ export function OrdersTable({ orders }: OrdersTableProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm bg-surface-container">
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left">
+        <table className="w-full min-w-[960px] border-collapse text-left">
           <thead>
             <tr className="border-b border-outline-variant/10 bg-surface-container-high">
               {TABLE_COLUMNS.map((col) => (

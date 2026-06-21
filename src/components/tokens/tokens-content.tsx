@@ -98,7 +98,7 @@ export function TokensContent({
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
+          <table className="w-full min-w-[900px] border-collapse text-left">
             <thead>
               <tr className="bg-surface-container-lowest">
                 {["Rank", "Investor Wallet Address", "Verification Status", "Tokens Held", "Ownership %", "Action"].map((h, i) => (

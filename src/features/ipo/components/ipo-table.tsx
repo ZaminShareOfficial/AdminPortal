@@ -25,7 +25,8 @@ const TABLE_HEADERS = [
 
 export const IpoTable = ({ ipos, selectedId, onSelect }: IpoTableProps) => (
   <div className="overflow-hidden rounded-lg border border-outline-variant/5 bg-surface-container">
-    <table className="w-full border-collapse text-left">
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[900px] border-collapse text-left">
       <thead>
         <tr className="border-b border-outline-variant/10 bg-surface-container-low">
           {TABLE_HEADERS.map((header, index) => (
@@ -125,7 +126,8 @@ export const IpoTable = ({ ipos, selectedId, onSelect }: IpoTableProps) => (
           })
         )}
       </tbody>
-    </table>
+      </table>
+    </div>
     <div className="flex items-center justify-between border-t border-outline-variant/10 bg-surface-container-low px-6 py-4">
       <p className="text-xs text-on-surface-variant">
         Showing {ipos.length} IPO{ipos.length === 1 ? "" : "s"} from the backend

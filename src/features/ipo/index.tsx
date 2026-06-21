@@ -90,7 +90,7 @@ export function IpoContent() {
       {loadError ? <ApiErrorBanner message={loadError} /> : null}
 
       <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-12 space-y-4 lg:col-span-8">
+        <div className="col-span-12 min-w-0 space-y-4 lg:col-span-8">
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-4">
               <h2 className="font-headline text-lg font-bold">Live & Pending IPOs</h2>

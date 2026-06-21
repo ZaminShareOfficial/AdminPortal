@@ -21,7 +21,8 @@ export const PropertiesTable = ({
   onSelect
 }: PropertiesTableProps) => (
   <div className="overflow-hidden rounded-lg border border-outline-variant/5 bg-surface-container">
-    <table className="w-full border-collapse text-left">
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[720px] border-collapse text-left">
       <thead>
         <tr className="bg-surface-container-lowest">
           {TABLE_COLUMNS.map((col) => (
@@ -104,6 +105,7 @@ export const PropertiesTable = ({
           ))
         )}
       </tbody>
-    </table>
+      </table>
+    </div>
   </div>
 );

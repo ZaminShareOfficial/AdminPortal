@@ -329,7 +329,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-        <div className="overflow-hidden bg-surface-container xl:col-span-2">
+        <div className="min-w-0 overflow-hidden bg-surface-container xl:col-span-2">
           <div className="flex items-center justify-between p-6">
             <h4 className="font-headline font-bold text-on-surface">
               Recent Property Listings
@@ -342,7 +342,7 @@ export default async function DashboardPage() {
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left text-sm">
+            <table className="w-full min-w-[720px] border-collapse text-left text-sm">
               <thead className="bg-surface-container-low">
                 <tr>
                   {[

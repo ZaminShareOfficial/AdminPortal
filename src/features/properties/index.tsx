@@ -30,7 +30,7 @@ export function PropertiesContent({
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
-      <section className="flex-1 overflow-y-auto p-8">
+      <section className="min-w-0 flex-1 overflow-y-auto p-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
