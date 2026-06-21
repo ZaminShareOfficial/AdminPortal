@@ -60,5 +60,12 @@ export const SCREEN_API_MAP = {
   finance: ["portfolio.allUsers"],
   tokens: ["portfolio.adminProperties", "portfolio.propertyHolders"],
   complaints: [],
-  settings: [],
+  settings: [
+    "auth.profile",
+    "auth.updateProfile",
+    "kyc.status",
+    "internal.createTemplate",
+    "internal.updateTemplate",
+    "internal.sendNotification"
+  ],
 } as const;

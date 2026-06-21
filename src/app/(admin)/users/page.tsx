@@ -1,4 +1,4 @@
-import { UsersContent } from "@/components/users/users-content";
+import { UsersContent } from "@/features/users";
 import { getErrorMessage } from "@/lib/api/errors";
 import { guardUnauthorized } from "@/lib/auth/unauthorized";
 import { mapUserPortfolioToRow } from "@/lib/mappers/portfolio";

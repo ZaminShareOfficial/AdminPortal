@@ -1,6 +1,7 @@
 import type {
   IpoDetailResponse,
   IpoSummaryResponse,
+  KycStatusResponse,
   ProfileResponse,
   PropertyHoldersResponse,
   PropertyPortfolioSummaryResponse,
@@ -12,6 +13,10 @@ import { apiFetch } from "@/lib/api/server-client";
 
 export function getProfile() {
   return apiFetch<ProfileResponse>("/me");
+}
+
+export function getKycStatus() {
+  return apiFetch<KycStatusResponse>("/kyc");
 }
 
 export function listProperties() {
