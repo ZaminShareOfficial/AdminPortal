@@ -11,6 +11,13 @@ export const listProperties = () =>
     url: "/properties"
   });
 
+export const getProperty = (id: string, signal?: AbortSignal) =>
+  adminApiRequest<PropertyResponse>({
+    method: "GET",
+    url: `/properties/${id}`,
+    signal
+  });
+
 export const createProperty = (body: CreatePropertyRequest) =>
   adminApiRequest<PropertyResponse>({
     method: "POST",

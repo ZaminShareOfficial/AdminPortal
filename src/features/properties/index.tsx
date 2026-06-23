@@ -7,6 +7,7 @@ import { PropertiesTable } from "@/features/properties/components/properties-tab
 import { PropertyEditPanel } from "@/features/properties/components/property-edit-panel";
 import type { PropertiesContentProps } from "@/features/properties/types";
 import { usePropertyActions } from "@/features/properties/use-property-actions";
+import { useSelectedPropertyDetail } from "@/features/properties/use-selected-property-detail";
 import { mapPropertyToRow } from "@/lib/mappers/property";
 
 export function PropertiesContent({
@@ -17,15 +18,16 @@ export function PropertiesContent({
     initialProperties[0]?.id ?? null,
   );
   const propertyActions = usePropertyActions();
+  const {
+    selectedProperty,
+    isLoadingDetail,
+    detailError,
+    refetchDetail
+  } = useSelectedPropertyDetail(selectedId);
 
   const properties = useMemo(
     () => initialProperties.map(mapPropertyToRow),
     [initialProperties],
-  );
-
-  const selectedProperty = useMemo(
-    () => initialProperties.find((property) => property.id === selectedId) ?? null,
-    [initialProperties, selectedId],
   );
 
   return (
@@ -65,7 +67,10 @@ export function PropertiesContent({
       <aside className="w-96 overflow-y-auto border-l border-outline-variant/10 bg-surface-container-low p-6">
         <PropertyEditPanel
           property={selectedProperty}
+          isLoadingDetail={isLoadingDetail}
+          detailError={detailError}
           propertyActions={propertyActions}
+          onUpdateSuccess={refetchDetail}
         />
       </aside>
     </div>

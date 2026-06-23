@@ -23,11 +23,13 @@ import type { PropertyResponse } from "@/types/backend";
 type PropertyEditFormProps = {
   property: PropertyResponse;
   propertyActions: PropertyActions;
+  onUpdateSuccess?: () => void;
 };
 
 const PropertyEditForm = ({
   property,
-  propertyActions
+  propertyActions,
+  onUpdateSuccess
 }: PropertyEditFormProps) => {
   const [form, setForm] = useState<PropertyCreateFormValues>(() =>
     propertyToForm(property),
@@ -41,7 +43,7 @@ const PropertyEditForm = ({
           Edit Asset
         </h2>
         <p className="mt-1 text-xs text-on-surface-variant">
-          PATCH /admin/properties/{property.id}
+          GET /properties/{property.id} · PATCH /admin/properties/{property.id}
         </p>
       </div>
 
@@ -168,7 +170,7 @@ const PropertyEditForm = ({
         variant="primary"
         className="w-full"
         isDisabled={isPending}
-        onPress={() => submitUpdate(property.id, form)}
+        onPress={() => submitUpdate(property.id, form, onUpdateSuccess)}
         data-testid="save-property-button"
       >
         <Icon name="save" className="text-base" />
@@ -180,19 +182,46 @@ const PropertyEditForm = ({
 
 type PropertyEditPanelProps = {
   property: PropertyResponse | null;
+  isLoadingDetail: boolean;
+  detailError: string | null;
   propertyActions: PropertyActions;
+  onUpdateSuccess?: () => void;
 };
 
 export const PropertyEditPanel = ({
   property,
-  propertyActions
+  isLoadingDetail,
+  detailError,
+  propertyActions,
+  onUpdateSuccess
 }: PropertyEditPanelProps) => {
-  if (!property) {
+  if (!property && !isLoadingDetail) {
     return (
       <p className="text-sm text-on-surface-variant">
-        Select a property from the list to view and edit live backend data.
+        Select a property from the list to load full details from GET
+        /properties/{"{id}"}.
       </p>
     );
+  }
+
+  if (isLoadingDetail) {
+    return (
+      <p className="text-sm text-on-surface-variant" data-testid="property-detail-loading">
+        Loading property details...
+      </p>
+    );
+  }
+
+  if (detailError) {
+    return (
+      <p className="text-sm text-error" role="alert" data-testid="property-detail-error">
+        {detailError}
+      </p>
+    );
+  }
+
+  if (!property) {
+    return null;
   }
 
   return (
@@ -200,6 +229,7 @@ export const PropertyEditPanel = ({
       key={property.id}
       property={property}
       propertyActions={propertyActions}
+      onUpdateSuccess={onUpdateSuccess}
     />
   );
 };
