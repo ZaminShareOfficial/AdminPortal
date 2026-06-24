@@ -1,7 +1,8 @@
 import type {
   SendOtpResponse,
-  VerifyOtpResponse,
+  VerifyOtpResponse
 } from "@/types/backend";
+import { AUTH } from "@/constants/auth";
 import { getErrorMessage } from "@/lib/api/errors";
 
 async function authFetch<T>(path: string, body: unknown): Promise<T> {
@@ -69,11 +70,24 @@ export async function persistSession(token: string) {
   const response = await fetch("/api/auth/session", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token }),
+    body: JSON.stringify({ token })
   });
 
+  if (response.status === AUTH.FORBIDDEN_STATUS) {
+    throw new Error(AUTH.NOT_ADMIN_MESSAGE);
+  }
+
   if (!response.ok) {
-    throw new Error("Could not persist admin session");
+    let message = "Could not persist admin session";
+    try {
+      const payload = (await response.json()) as { message?: string };
+      if (payload.message) {
+        message = payload.message;
+      }
+    } catch {
+      // ignore non-json bodies
+    }
+    throw new Error(message);
   }
 }
 

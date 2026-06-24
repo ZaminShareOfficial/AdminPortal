@@ -1,12 +1,12 @@
 import { AdminLayout } from "@/components/admin/admin-layout";
-import { requireSession } from "@/lib/auth/session";
+import { requireAdminSession } from "@/lib/auth/admin-access";
 
 export default async function AdminRouteLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
-  await requireSession();
+  await requireAdminSession();
 
   return <AdminLayout>{children}</AdminLayout>;
 }

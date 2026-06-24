@@ -3,7 +3,7 @@
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import { LOGIN_PATH } from "@/constants/routes";
-import { UNAUTHORIZED_STATUS } from "@/constants/auth";
+import { AUTH } from "@/constants/auth";
 import { clearSession } from "@/lib/auth/auth-service";
 
 let isRedirectingToLogin = false;
@@ -30,7 +30,7 @@ export const attachUnauthorizedRedirect = (client: AxiosInstance): void => {
     async (error: unknown) => {
       if (
         axios.isAxiosError(error) &&
-        error.response?.status === UNAUTHORIZED_STATUS
+        error.response?.status === AUTH.UNAUTHORIZED_STATUS
       ) {
         await handleClientUnauthorized();
       }

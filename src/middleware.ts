@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
+  ACCESS_DENIED_PATH,
   DEFAULT_AUTHENTICATED_PATH,
   isPublicPath,
-  LOGIN_PATH,
+  LOGIN_PATH
 } from "@/constants/routes";
 import { SESSION_COOKIE } from "@/lib/auth/cookie";
 
@@ -36,9 +37,9 @@ export function middleware(request: NextRequest) {
   }
 
   if (isPublicPath(pathname)) {
-    if (token) {
+    if (token && pathname !== ACCESS_DENIED_PATH) {
       return NextResponse.redirect(
-        new URL(DEFAULT_AUTHENTICATED_PATH, request.url),
+        new URL(DEFAULT_AUTHENTICATED_PATH, request.url)
       );
     }
 

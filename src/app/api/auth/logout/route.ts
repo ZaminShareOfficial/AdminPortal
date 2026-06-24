@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { LOGIN_PATH } from "@/constants/routes";
+import { ACCESS_DENIED_PATH, LOGIN_PATH } from "@/constants/routes";
 import { SESSION_COOKIE } from "@/lib/auth/cookie";
 
 const clearSessionCookie = (response: NextResponse) => {
@@ -7,13 +7,25 @@ const clearSessionCookie = (response: NextResponse) => {
   return response;
 };
 
-export async function GET(request: Request) {
-  const redirectTarget = new URL(request.url).searchParams.get("redirect");
-
+const resolveLogoutRedirect = (redirectTarget: string | null, requestUrl: string) => {
   if (redirectTarget === "login") {
-    return clearSessionCookie(
-      NextResponse.redirect(new URL(LOGIN_PATH, request.url)),
-    );
+    return new URL(LOGIN_PATH, requestUrl);
+  }
+
+  if (redirectTarget === "access-denied") {
+    return new URL(ACCESS_DENIED_PATH, requestUrl);
+  }
+
+  return null;
+};
+
+export async function GET(request: Request) {
+  const requestUrl = request.url;
+  const redirectTarget = new URL(requestUrl).searchParams.get("redirect");
+  const redirectUrl = resolveLogoutRedirect(redirectTarget, requestUrl);
+
+  if (redirectUrl) {
+    return clearSessionCookie(NextResponse.redirect(redirectUrl));
   }
 
   return clearSessionCookie(NextResponse.json({ ok: true }));
