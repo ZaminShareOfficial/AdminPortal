@@ -1,20 +1,42 @@
-import { getErrorMessage } from "@/lib/api/errors";
-import { guardUnauthorized } from "@/lib/auth/unauthorized";
-import { listProperties } from "@/lib/services/backend";
-import type { PropertiesContentProps } from "@/features/properties/types";
+"use client";
 
-export async function loadPropertiesPageData(): Promise<PropertiesContentProps> {
-  try {
-    const initialProperties = await listProperties();
-    return {
-      initialProperties,
-      error: null
-    };
-  } catch (error) {
-    await guardUnauthorized(error);
-    return {
-      initialProperties: [],
-      error: getErrorMessage(error, "Could not load properties from the backend.")
-    };
-  }
-}
+import { useCallback, useEffect, useState } from "react";
+import { listProperties } from "@/features/properties/services/PropertiesApiService";
+import { getErrorMessage } from "@/lib/api/errors";
+import type { PropertyResponse } from "@/types/backend";
+
+type PropertiesPageData = {
+  initialProperties: PropertyResponse[];
+  error: string | null;
+  isLoading: boolean;
+};
+
+export const usePropertiesPageData = (): PropertiesPageData => {
+  const [initialProperties, setInitialProperties] = useState<PropertyResponse[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchProperties = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const properties = await listProperties();
+      setInitialProperties(properties);
+    } catch (loadError) {
+      setInitialProperties([]);
+      setError(
+        getErrorMessage(loadError, "Could not load properties from the backend.")
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // useEffect justified: data fetch — load properties on mount
+  useEffect(() => {
+    void fetchProperties();
+  }, [fetchProperties]);
+
+  return { initialProperties, error, isLoading };
+};

@@ -5,30 +5,39 @@ import { ApiErrorBanner } from "@/components/admin/api-error-banner";
 import { CreatePropertyTrigger } from "@/features/properties/components/create-property-modal";
 import { PropertiesTable } from "@/features/properties/components/properties-table";
 import { PropertyEditPanel } from "@/features/properties/components/property-edit-panel";
-import type { PropertiesContentProps } from "@/features/properties/types";
+import { usePropertiesPageData } from "@/features/properties/hooks";
 import { usePropertyActions } from "@/features/properties/use-property-actions";
 import { useSelectedPropertyDetail } from "@/features/properties/use-selected-property-detail";
 import { mapPropertyToRow } from "@/lib/mappers/property";
 
-export function PropertiesContent({
-  initialProperties,
-  error = null
-}: PropertiesContentProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(
-    initialProperties[0]?.id ?? null,
-  );
+export function PropertiesContent() {
+  const { initialProperties, error, isLoading } = usePropertiesPageData();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const propertyActions = usePropertyActions();
+  const effectiveSelectedId =
+    selectedId ?? initialProperties[0]?.id ?? null;
   const {
     selectedProperty,
     isLoadingDetail,
     detailError,
     refetchDetail
-  } = useSelectedPropertyDetail(selectedId);
+  } = useSelectedPropertyDetail(effectiveSelectedId);
 
   const properties = useMemo(
     () => initialProperties.map(mapPropertyToRow),
-    [initialProperties],
+    [initialProperties]
   );
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex flex-1 items-center justify-center text-on-surface-variant"
+        data-testid="properties-loading"
+      >
+        Loading properties…
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -59,7 +68,7 @@ export function PropertiesContent({
 
         <PropertiesTable
           properties={properties}
-          selectedId={selectedId}
+          selectedId={effectiveSelectedId}
           onSelect={setSelectedId}
         />
       </section>
