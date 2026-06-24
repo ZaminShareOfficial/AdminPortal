@@ -6,14 +6,14 @@ import { KycSection } from "@/features/settings/components/kyc-section";
 import { NotificationSection } from "@/features/settings/components/notification-section";
 import { ProfileSection } from "@/features/settings/components/profile-section";
 import { TemplateSection } from "@/features/settings/components/template-section";
-import { useSettingsActions } from "@/features/settings/hooks";
-import type { SettingsContentProps, NotificationFormValues } from "@/features/settings/types";
+import {
+  useSettingsActions,
+  useSettingsPageData
+} from "@/features/settings/hooks";
+import type { NotificationFormValues } from "@/features/settings/types";
 
-export function SettingsContent({
-  profile,
-  kycStatus,
-  error = null
-}: SettingsContentProps) {
+export function SettingsContent() {
+  const { profile, kycStatus, error, isLoading, refetch } = useSettingsPageData();
   const profileKey = `${profile?.id ?? "none"}:${profile?.firstName ?? ""}:${profile?.email ?? ""}`;
   const [templateForm, setTemplateForm] = useState({
     templateName: "",
@@ -35,7 +35,18 @@ export function SettingsContent({
     submitCreateTemplate,
     submitUpdateTemplate,
     submitNotification
-  } = useSettingsActions();
+  } = useSettingsActions(refetch);
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex flex-1 items-center justify-center text-on-surface-variant"
+        data-testid="settings-loading"
+      >
+        Loading settings…
+      </div>
+    );
+  }
 
   return (
     <div className="hide-scrollbar flex-1 space-y-8 overflow-y-auto p-8">

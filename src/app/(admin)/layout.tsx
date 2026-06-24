@@ -1,12 +1,11 @@
-import { AdminLayout } from "@/components/admin/admin-layout";
-import { requireAdminSession } from "@/lib/auth/admin-access";
+"use client";
 
-export default async function AdminRouteLayout({
+import { AdminRouteGuard } from "@/components/admin/admin-route-guard";
+
+export default function AdminRouteLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  await requireAdminSession();
-
-  return <AdminLayout>{children}</AdminLayout>;
+  return <AdminRouteGuard>{children}</AdminRouteGuard>;
 }

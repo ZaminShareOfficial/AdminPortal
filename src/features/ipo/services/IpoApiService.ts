@@ -9,11 +9,13 @@ import type {
 } from "@/types/backend";
 import { adminApiRequest } from "@/lib/api/admin-api";
 
-export const listIpos = () =>
-  adminApiRequest<IpoSummaryResponse[]>({
+export const listIpos = (params?: { active?: boolean }) => {
+  const search = params?.active ? "?active=true" : "";
+  return adminApiRequest<IpoSummaryResponse[]>({
     method: "GET",
-    url: "/ipos"
+    url: `/ipos${search}`
   });
+};
 
 export const createIpo = (body: CreateIpoRequest) =>
   adminApiRequest<CreateIpoResponse>({

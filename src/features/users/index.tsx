@@ -3,21 +3,22 @@
 import { Icon } from "@/components/admin/icon";
 import { ApiErrorBanner } from "@/components/admin/api-error-banner";
 import { NotifyUserButton } from "@/features/users/components/notify-user-button";
-import type { UserRow } from "@/lib/mappers/portfolio";
+import { useUsersPageData } from "@/features/users/hooks";
 
-type UsersContentProps = {
-  users: UserRow[];
-  totalUsers: number;
-  pendingKyc: number;
-  error?: string | null;
-};
+export function UsersContent() {
+  const { users, totalUsers, pendingKyc, error, isLoading } = useUsersPageData();
 
-export function UsersContent({
-  users,
-  totalUsers,
-  pendingKyc,
-  error = null
-}: UsersContentProps) {
+  if (isLoading) {
+    return (
+      <div
+        className="flex flex-1 items-center justify-center text-on-surface-variant"
+        data-testid="users-loading"
+      >
+        Loading users…
+      </div>
+    );
+  }
+
   return (
     <div className="hide-scrollbar flex-1 space-y-8 overflow-y-auto p-8">
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">

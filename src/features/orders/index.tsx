@@ -5,14 +5,22 @@ import { ActivityFeed } from "@/features/orders/components/activity-feed";
 import { OrdersHeader } from "@/features/orders/components/orders-header";
 import { OrdersStats } from "@/features/orders/components/orders-stats";
 import { OrdersTable } from "@/features/orders/components/orders-table";
-import type { OrdersContentProps } from "@/features/orders/types";
+import { useOrdersPageData } from "@/features/orders/hooks";
 
-export function OrdersContent({
-  orders,
-  feed,
-  openOrderCount,
-  error = null,
-}: OrdersContentProps) {
+export function OrdersContent() {
+  const { orders, feed, openOrderCount, error, isLoading } = useOrdersPageData();
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex flex-1 items-center justify-center text-on-surface-variant"
+        data-testid="orders-loading"
+      >
+        Loading orders…
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
       <div className="hide-scrollbar flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto p-8">

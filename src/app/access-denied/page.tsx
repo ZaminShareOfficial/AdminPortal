@@ -1,3 +1,5 @@
+"use client";
+
 import { AccessDeniedContent } from "@/components/auth/access-denied-content";
 
 export default function AccessDeniedPage() {

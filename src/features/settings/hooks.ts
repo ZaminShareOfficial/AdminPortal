@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import {
   createTemplate,
+  fetchKycStatus,
+  fetchProfile,
   sendNotification,
   updateProfile,
   updateTemplate
@@ -14,8 +16,58 @@ import type {
   ProfileFormValues,
   TemplateFormValues
 } from "@/features/settings/types";
+import { getErrorMessage } from "@/lib/api/errors";
+import type { KycStatusResponse, ProfileResponse } from "@/types/backend";
 
-export const useSettingsActions = () => {
+type SettingsPageData = {
+  profile: ProfileResponse | null;
+  kycStatus: KycStatusResponse | null;
+  error: string | null;
+  isLoading: boolean;
+  refetch: () => Promise<void>;
+};
+
+export const useSettingsPageData = (): SettingsPageData => {
+  const [profile, setProfile] = useState<ProfileResponse | null>(null);
+  const [kycStatus, setKycStatus] = useState<KycStatusResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchSettings = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const [nextProfile, nextKycStatus] = await Promise.all([
+        fetchProfile(),
+        fetchKycStatus().catch(() => null)
+      ]);
+      setProfile(nextProfile);
+      setKycStatus(nextKycStatus);
+    } catch (loadError) {
+      setProfile(null);
+      setKycStatus(null);
+      setError(getErrorMessage(loadError, "Could not load settings data."));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // useEffect justified: data fetch — load settings on mount
+  useEffect(() => {
+    void fetchSettings();
+  }, [fetchSettings]);
+
+  return {
+    profile,
+    kycStatus,
+    error,
+    isLoading,
+    refetch: fetchSettings
+  };
+};
+
+export const useSettingsActions = (onSuccess?: () => void) => {
   const router = useRouter();
   const [actionError, setActionError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -28,10 +80,11 @@ export const useSettingsActions = () => {
       try {
         await action();
         setSuccessMessage(success);
+        onSuccess?.();
         router.refresh();
       } catch (error) {
         setActionError(
-          error instanceof Error ? error.message : "Request failed.",
+          error instanceof Error ? error.message : "Request failed."
         );
       }
     });
