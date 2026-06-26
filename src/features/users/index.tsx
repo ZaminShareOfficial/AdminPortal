@@ -5,7 +5,7 @@ import { ApiErrorBanner } from "@/components/admin/api-error-banner";
 import { NotifyUserButton } from "@/features/users/components/notify-user-button";
 import { useUsersPageData } from "@/features/users/hooks";
 
-export function UsersContent() {
+export const UsersContent = () => {
   const { users, totalUsers, pendingKyc, error, isLoading } = useUsersPageData();
 
   if (isLoading) {
@@ -20,16 +20,14 @@ export function UsersContent() {
   }
 
   return (
-    <div className="hide-scrollbar flex-1 space-y-8 overflow-y-auto p-8">
-      <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-        <div>
-          <h1 className="font-headline text-3xl font-bold tracking-tight text-on-surface">
-            Access Management
-          </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
-            Investor registry from GET /portfolio. Per-user KYC review is not exposed by Swagger yet.
-          </p>
-        </div>
+    <div className="hide-scrollbar flex-1 space-y-8 overflow-y-auto p-8" data-testid="users-page">
+      <div>
+        <h1 className="font-headline text-3xl font-bold tracking-tight text-on-surface">
+          Users
+        </h1>
+        <p className="mt-1 text-sm text-on-surface-variant">
+          Investor registry from GET /portfolio.
+        </p>
       </div>
 
       {error ? <ApiErrorBanner message={error} /> : null}
@@ -117,8 +115,8 @@ export function UsersContent() {
 
       <p className="flex items-center gap-2 text-xs text-on-surface-variant">
         <Icon name="info" className="text-sm" />
-        GET /kyc only returns the signed-in admin&apos;s KYC. User-level KYC APIs are not in Swagger.
+        Per-user KYC review is not exposed by Swagger yet.
       </p>
     </div>
   );
-}
+};

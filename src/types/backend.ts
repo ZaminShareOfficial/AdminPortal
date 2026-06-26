@@ -263,3 +263,57 @@ export type SendNotificationResponse = {
   requestId: string;
   status: "PENDING" | "SUCCESS" | "FAILED";
 };
+
+export type BrokerKycStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export type BrokerOnboardingStatus =
+  | "PROFILE_PENDING"
+  | "APPROVED"
+  | "AGREEMENT_SIGNED"
+  | "ACTIVE"
+  | "REJECTED";
+
+export type AdminBrokerSummaryResponse = {
+  brokerId: string;
+  userId: string;
+  brokerName: string;
+  mobileNumber?: string | null;
+  email?: string | null;
+  kycStatus?: BrokerKycStatus | null;
+  onboardingStatus?: BrokerOnboardingStatus | null;
+  companyName?: string | null;
+  submittedAt?: string | null;
+};
+
+export type DocumentRef = {
+  type?: string | null;
+  url?: string | null;
+};
+
+export type AdminBrokerDetailResponse = {
+  brokerId: string;
+  userId: string;
+  brokerName: string;
+  mobileNumber?: string | null;
+  email?: string | null;
+  kycStatus?: BrokerKycStatus | null;
+  maskedPan?: string | null;
+  onboardingStatus?: BrokerOnboardingStatus | null;
+  bankAccountNumber?: string | null;
+  bankIfsc?: string | null;
+  bankAccountHolder?: string | null;
+  bankVerified?: boolean | null;
+  aadhaarNumber?: string | null;
+  companyName?: string | null;
+  companyRegistrationNumber?: string | null;
+  documents?: DocumentRef[] | null;
+  agreementSigned?: boolean | null;
+  trainingCompleted?: boolean | null;
+  rejectionReason?: string | null;
+  referralCode?: string | null;
+};
+
+export type ReviewBrokerRequest = {
+  action: "APPROVE" | "REJECT";
+  reason?: string;
+};

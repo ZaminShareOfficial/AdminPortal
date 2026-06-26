@@ -37,7 +37,7 @@ export function Sidebar() {
           const active = isActive(pathname, item.href);
           return (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               className={`flex items-center gap-3 rounded px-3 py-2.5 text-sm transition-all ${
                 active

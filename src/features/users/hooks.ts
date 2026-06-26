@@ -16,8 +16,6 @@ type UsersPageData = {
 
 export const useUsersPageData = (): UsersPageData => {
   const [users, setUsers] = useState<UserRow[]>([]);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [pendingKyc, setPendingKyc] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,14 +25,9 @@ export const useUsersPageData = (): UsersPageData => {
 
     try {
       const portfolios = await listUserPortfolios();
-      const rows = portfolios.map(mapUserPortfolioToRow);
-      setUsers(rows);
-      setTotalUsers(rows.length);
-      setPendingKyc(rows.filter((user) => user.kyc === "PENDING").length);
+      setUsers(portfolios.map(mapUserPortfolioToRow));
     } catch (loadError) {
       setUsers([]);
-      setTotalUsers(0);
-      setPendingKyc(0);
       setError(getErrorMessage(loadError, "Could not load users from GET /portfolio."));
     } finally {
       setIsLoading(false);
@@ -46,5 +39,11 @@ export const useUsersPageData = (): UsersPageData => {
     void fetchUsers();
   }, [fetchUsers]);
 
-  return { users, totalUsers, pendingKyc, error, isLoading };
+  return {
+    users,
+    totalUsers: users.length,
+    pendingKyc: users.filter((user) => user.kyc === "PENDING").length,
+    error,
+    isLoading
+  };
 };
