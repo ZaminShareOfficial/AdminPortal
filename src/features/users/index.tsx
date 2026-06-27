@@ -6,7 +6,8 @@ import { NotifyUserButton } from "@/features/users/components/notify-user-button
 import { useUsersPageData } from "@/features/users/hooks";
 
 export const UsersContent = () => {
-  const { users, totalUsers, pendingKyc, error, isLoading } = useUsersPageData();
+  const { users, totalUsers, activeUsers, pendingKyc, error, isLoading } =
+    useUsersPageData();
 
   if (isLoading) {
     return (
@@ -26,19 +27,27 @@ export const UsersContent = () => {
           Users
         </h1>
         <p className="mt-1 text-sm text-on-surface-variant">
-          Investor registry from GET /portfolio.
+          User registry from GET /admin/users.
         </p>
       </div>
 
       {error ? <ApiErrorBanner message={error} /> : null}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="flex h-40 flex-col justify-between bg-surface-container-high p-6 md:col-span-2">
+        <div className="flex h-40 flex-col justify-between bg-surface-container-high p-6">
           <span className="text-xs font-bold uppercase tracking-[0.1em] text-on-surface-variant">
-            Total Active Users
+            Total Users
           </span>
           <div className="font-headline text-4xl font-extrabold text-primary">
             {totalUsers.toLocaleString()}
+          </div>
+        </div>
+        <div className="flex h-40 flex-col justify-between bg-surface-container-low p-6">
+          <span className="text-xs font-bold uppercase tracking-[0.1em] text-on-surface-variant">
+            Active Users
+          </span>
+          <div className="font-headline text-4xl font-extrabold text-tertiary">
+            {activeUsers}
           </div>
         </div>
         <div className="flex h-40 flex-col justify-between bg-surface-container-low p-6">
@@ -54,7 +63,7 @@ export const UsersContent = () => {
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="bg-surface-container-lowest/50">
-                {["User ID", "Name", "KYC Status", "Portfolio Value", "Actions"].map(
+                {["User ID", "Name", "KYC Status", "Account Status", "Joined", "Actions"].map(
                   (heading) => (
                     <th
                       key={heading}
@@ -71,10 +80,10 @@ export const UsersContent = () => {
               {users.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={6}
                     className="px-8 py-10 text-center text-sm text-on-surface-variant"
                   >
-                    No investor portfolios returned from GET /portfolio.
+                    No users returned from GET /admin/users.
                   </td>
                 </tr>
               ) : (
@@ -84,7 +93,7 @@ export const UsersContent = () => {
                     className="transition-colors hover:bg-surface-container"
                   >
                     <td className="px-8 py-4 font-mono text-xs text-on-surface-variant">
-                      {user.id}
+                      {user.displayId}
                     </td>
                     <td className="px-8 py-4">
                       <div className="flex items-center gap-3">
@@ -99,8 +108,13 @@ export const UsersContent = () => {
                         {user.kyc}
                       </span>
                     </td>
-                    <td className="px-8 py-4 text-right text-sm font-semibold text-secondary">
-                      {user.portfolio}
+                    <td className="px-8 py-4">
+                      <span className={`px-2 py-0.5 text-[10px] font-bold ${user.statusClass}`}>
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-4 text-sm text-on-surface-variant">
+                      {user.joinedAt}
                     </td>
                     <td className="px-8 py-4 text-right">
                       <NotifyUserButton userName={user.name} userId={user.id} />
@@ -115,7 +129,7 @@ export const UsersContent = () => {
 
       <p className="flex items-center gap-2 text-xs text-on-surface-variant">
         <Icon name="info" className="text-sm" />
-        Per-user KYC review is not exposed by Swagger yet.
+        Users are listed newest first from GET /admin/users.
       </p>
     </div>
   );

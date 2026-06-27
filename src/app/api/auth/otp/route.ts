@@ -19,9 +19,7 @@ export async function POST(request: Request) {
       skipAuth: true,
       body: JSON.stringify({
         mobileNumber: body.mobileNumber.trim(),
-        challengeType: "OTP",
-        role: "ADMIN",
-        scope: "LOGIN",
+        challengeType: "OTP"
       }),
     });
 

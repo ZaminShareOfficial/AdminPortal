@@ -35,9 +35,14 @@ export async function apiFetch<T>(
   if (!response.ok) {
     let message = response.statusText;
     try {
-      const body = (await response.json()) as { message?: string };
+      const body = (await response.json()) as {
+        message?: string;
+        errorCode?: string;
+      };
       if (body.message) {
-        message = body.message;
+        message = body.errorCode
+          ? `${body.message} (${body.errorCode})`
+          : body.message;
       }
     } catch {
       // ignore non-json bodies

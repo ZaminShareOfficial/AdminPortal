@@ -23,9 +23,8 @@ export async function POST(request: Request) {
       skipAuth: true,
       body: JSON.stringify({
         sessionId: body.sessionId.trim(),
-        mobileNumber: body.mobileNumber.trim(),
         challenge: body.challenge.trim(),
-        challengeType: "OTP",
+        challengeType: "OTP"
       }),
     });
 

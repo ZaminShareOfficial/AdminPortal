@@ -42,6 +42,9 @@ export const API_ENDPOINTS = {
     get: "GET /admin/brokers/{brokerId}",
     review: "PATCH /admin/brokers/{brokerId}",
   },
+  users: {
+    list: "GET /admin/users",
+  },
   kyc: {
     status: "GET /kyc",
     submitPan: "POST /kyc/pan",
@@ -61,7 +64,7 @@ export const SCREEN_API_MAP = {
   properties: ["properties.list", "properties.get"],
   ipo: ["ipo.list", "properties.list"],
   orders: ["orders.bulletin", "orders.orderBook"],
-  users: ["portfolio.allUsers"],
+  users: ["users.list"],
   brokers: ["brokers.list"],
   finance: ["portfolio.allUsers"],
   tokens: ["portfolio.adminProperties", "portfolio.propertyHolders"],

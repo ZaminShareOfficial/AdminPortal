@@ -2,20 +2,21 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getErrorMessage } from "@/lib/api/errors";
-import { mapUserPortfolioToRow } from "@/lib/mappers/portfolio";
-import type { UserRow } from "@/lib/mappers/portfolio";
-import { listUserPortfolios } from "@/lib/services/portfolio-api-service";
+import { mapAdminUserToRow } from "@/lib/mappers/user";
+import type { AdminUserRow } from "@/lib/mappers/user";
+import { listUsers } from "@/lib/services/users-api-service";
 
 type UsersPageData = {
-  users: UserRow[];
+  users: AdminUserRow[];
   totalUsers: number;
+  activeUsers: number;
   pendingKyc: number;
   error: string | null;
   isLoading: boolean;
 };
 
 export const useUsersPageData = (): UsersPageData => {
-  const [users, setUsers] = useState<UserRow[]>([]);
+  const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,17 +25,17 @@ export const useUsersPageData = (): UsersPageData => {
     setError(null);
 
     try {
-      const portfolios = await listUserPortfolios();
-      setUsers(portfolios.map(mapUserPortfolioToRow));
+      const response = await listUsers();
+      setUsers(response.map(mapAdminUserToRow));
     } catch (loadError) {
       setUsers([]);
-      setError(getErrorMessage(loadError, "Could not load users from GET /portfolio."));
+      setError(getErrorMessage(loadError, "Could not load users from GET /admin/users."));
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // useEffect justified: data fetch — load user portfolios on mount
+  // useEffect justified: data fetch — load users on mount
   useEffect(() => {
     void fetchUsers();
   }, [fetchUsers]);
@@ -42,6 +43,7 @@ export const useUsersPageData = (): UsersPageData => {
   return {
     users,
     totalUsers: users.length,
+    activeUsers: users.filter((user) => user.status === "ACTIVE").length,
     pendingKyc: users.filter((user) => user.kyc === "PENDING").length,
     error,
     isLoading

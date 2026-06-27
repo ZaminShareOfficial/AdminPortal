@@ -99,6 +99,15 @@ export type ProfileResponse = {
   status?: "PENDING_PROFILE" | "ACTIVE" | "DELETED";
 };
 
+export type AdminUserSummaryResponse = {
+  id: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  kycStatus?: ProfileResponse["kycStatus"];
+  status?: ProfileResponse["status"];
+  createdAt?: string | null;
+};
+
 export type PortfolioHoldingResponse = {
   propertyId: string;
   propertyTitle: string;
