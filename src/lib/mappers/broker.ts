@@ -7,6 +7,7 @@ import { formatDateTime } from "@/lib/format";
 
 export type BrokerRow = {
   id: string;
+  brokerId: string;
   userId: string;
   initials: string;
   name: string;
@@ -63,6 +64,7 @@ export const mapBrokerSummaryToRow = (
 
   return {
     id: `#BRK-${broker.brokerId.slice(0, 8).toUpperCase()}`,
+    brokerId: broker.brokerId,
     userId: broker.userId,
     initials: initialsFromName(name),
     name,

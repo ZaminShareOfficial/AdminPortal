@@ -3,7 +3,7 @@
 import { Icon } from "@/components/admin/icon";
 import { ApiErrorBanner } from "@/components/admin/api-error-banner";
 import { useBrokersPageData } from "@/features/brokers/hooks";
-import { NotifyUserButton } from "@/features/users/components/notify-user-button";
+import { ReviewBrokerActions } from "@/features/brokers/components/review-broker-actions";
 
 export const BrokersContent = () => {
   const {
@@ -12,7 +12,8 @@ export const BrokersContent = () => {
     pendingReview,
     activeBrokers,
     error,
-    isLoading
+    isLoading,
+    refetchBrokers
   } = useBrokersPageData();
 
   if (isLoading) {
@@ -138,7 +139,12 @@ export const BrokersContent = () => {
                       {broker.submittedAt}
                     </td>
                     <td className="px-8 py-4 text-right">
-                      <NotifyUserButton userName={broker.name} userId={broker.userId} />
+                      <ReviewBrokerActions
+                        brokerId={broker.brokerId}
+                        brokerName={broker.name}
+                        onboarding={broker.onboarding}
+                        onReviewComplete={() => void refetchBrokers()}
+                      />
                     </td>
                   </tr>
                 ))

@@ -65,7 +65,7 @@ export const SCREEN_API_MAP = {
   ipo: ["ipo.list", "properties.list"],
   orders: ["orders.bulletin", "orders.orderBook"],
   users: ["users.list"],
-  brokers: ["brokers.list"],
+  brokers: ["brokers.list", "brokers.review"],
   finance: ["portfolio.allUsers"],
   tokens: ["portfolio.adminProperties", "portfolio.propertyHolders"],
   complaints: [],

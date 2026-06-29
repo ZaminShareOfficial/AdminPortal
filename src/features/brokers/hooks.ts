@@ -13,6 +13,7 @@ type BrokersPageData = {
   activeBrokers: number;
   error: string | null;
   isLoading: boolean;
+  refetchBrokers: () => Promise<void>;
 };
 
 export const useBrokersPageData = (): BrokersPageData => {
@@ -46,6 +47,7 @@ export const useBrokersPageData = (): BrokersPageData => {
     pendingReview: brokers.filter((broker) => broker.onboarding === "PROFILE_PENDING").length,
     activeBrokers: brokers.filter((broker) => broker.onboarding === "ACTIVE").length,
     error,
-    isLoading
+    isLoading,
+    refetchBrokers: fetchBrokers
   };
 };
