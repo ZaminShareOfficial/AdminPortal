@@ -11,7 +11,10 @@ import { EnumSelect } from "@/components/admin/enum-select";
 import { Icon } from "@/components/admin/icon";
 import { NumericInputField } from "@/components/admin/numeric-input-field";
 import {
-  PROPERTY_STATUS_SELECT_OPTIONS,
+  getPropertyStatusLabel,
+  isEditablePropertyStatus,
+  PROPERTY_EDITABLE_STATUS_SELECT_OPTIONS,
+  PROPERTY_STATUS,
   PROPERTY_TYPE_SELECT_OPTIONS
 } from "@/constants/property";
 import { UrlListUploadField } from "@/features/uploads/components/url-list-upload-field";
@@ -35,6 +38,9 @@ const PropertyEditForm = ({
     propertyToForm(property),
   );
   const { actionError, isPending, submitUpdate } = propertyActions;
+  const canEditStatus = isEditablePropertyStatus(
+    property.status ?? PROPERTY_STATUS.DRAFT,
+  );
 
   return (
     <div className="space-y-6">
@@ -152,13 +158,25 @@ const PropertyEditForm = ({
         testId="edit-property-type"
       />
 
-      <EnumSelect
-        label="Status"
-        value={form.status}
-        options={PROPERTY_STATUS_SELECT_OPTIONS}
-        onChange={(status) => setForm({ ...form, status })}
-        testId="edit-property-status"
-      />
+      {canEditStatus ? (
+        <EnumSelect
+          label="Status"
+          value={form.status}
+          options={PROPERTY_EDITABLE_STATUS_SELECT_OPTIONS}
+          onChange={(status) => setForm({ ...form, status })}
+          testId="edit-property-status"
+        />
+      ) : (
+        <div className="space-y-1">
+          <Label>Status</Label>
+          <p
+            className="text-sm text-on-surface-variant"
+            data-testid="edit-property-status-readonly"
+          >
+            {getPropertyStatusLabel(property.status ?? PROPERTY_STATUS.DRAFT)}
+          </p>
+        </div>
+      )}
 
       {actionError ? (
         <p className="text-sm text-error" role="alert">

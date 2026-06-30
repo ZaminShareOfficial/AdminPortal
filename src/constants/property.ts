@@ -19,7 +19,7 @@ export const PROPERTY_STATUS = {
   TRADING: "TRADING"
 } as const satisfies Record<string, PropertyStatus>;
 
-/** Four admin-selectable statuses — values sent in payloads. */
+/** Four display statuses used in tables and labels. */
 export const PROPERTY_STATUS_OPTIONS = [
   { value: PROPERTY_STATUS.DRAFT, label: "Draft" },
   { value: PROPERTY_STATUS.APPROVED, label: "Approved" },
@@ -27,7 +27,16 @@ export const PROPERTY_STATUS_OPTIONS = [
   { value: PROPERTY_STATUS.TRADING, label: "Listed" }
 ] as const;
 
+/** Statuses admins may set from the property edit form. */
+export const PROPERTY_EDITABLE_STATUS_OPTIONS = [
+  { value: PROPERTY_STATUS.DRAFT, label: "Draft" },
+  { value: PROPERTY_STATUS.APPROVED, label: "Approved" }
+] as const;
+
 export type PropertyFormStatus = (typeof PROPERTY_STATUS_OPTIONS)[number]["value"];
+
+export type PropertyEditableStatus =
+  (typeof PROPERTY_EDITABLE_STATUS_OPTIONS)[number]["value"];
 
 const displayLabels: Record<PropertyFormStatus, string> = {
   DRAFT: "Draft",
@@ -72,6 +81,11 @@ export const normalizePropertyStatusForForm = (
   }
 };
 
+export const isEditablePropertyStatus = (
+  status: PropertyStatus,
+): status is PropertyEditableStatus =>
+  status === PROPERTY_STATUS.DRAFT || status === PROPERTY_STATUS.APPROVED;
+
 export const PROPERTY_TYPE_SELECT_OPTIONS: EnumSelectOption[] = PROPERTY_TYPES.map(
   (type) => ({
     id: type.value,
@@ -81,6 +95,12 @@ export const PROPERTY_TYPE_SELECT_OPTIONS: EnumSelectOption[] = PROPERTY_TYPES.m
 
 export const PROPERTY_STATUS_SELECT_OPTIONS: EnumSelectOption[] =
   PROPERTY_STATUS_OPTIONS.map((status) => ({
+    id: status.value,
+    label: status.label
+  }));
+
+export const PROPERTY_EDITABLE_STATUS_SELECT_OPTIONS: EnumSelectOption[] =
+  PROPERTY_EDITABLE_STATUS_OPTIONS.map((status) => ({
     id: status.value,
     label: status.label
   }));

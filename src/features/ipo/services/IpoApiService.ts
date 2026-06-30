@@ -1,6 +1,7 @@
 import type {
   CreateIpoRequest,
   CreateIpoResponse,
+  IpoDetailResponse,
   IpoStatusResponse,
   IpoSubscriptionSummaryResponse,
   IpoSummaryResponse,
@@ -16,6 +17,12 @@ export const listIpos = (params?: { active?: boolean }) => {
     url: `/ipos${search}`
   });
 };
+
+export const getIpo = (ipoId: string) =>
+  adminApiRequest<IpoDetailResponse>({
+    method: "GET",
+    url: `/ipos/${ipoId}`
+  });
 
 export const createIpo = (body: CreateIpoRequest) =>
   adminApiRequest<CreateIpoResponse>({

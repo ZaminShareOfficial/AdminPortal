@@ -10,7 +10,8 @@ import {
   mintIpo,
   updateIpoStatus
 } from "@/features/ipo/services/IpoApiService";
-import { canMintIpo, getIpoToggleTarget } from "@/features/ipo/utils";
+import { IPO_STATUS } from "@/constants/ipo";
+import { canFailIpo, canMintIpo, getIpoToggleTarget } from "@/features/ipo/utils";
 import type { IpoStatus } from "@/types/backend";
 
 export const useIpoActions = (refetchIpos: () => Promise<void>) => {
@@ -80,6 +81,29 @@ export const useIpoActions = (refetchIpos: () => Promise<void>) => {
     });
   };
 
+  const submitFail = (
+    ipoId: string,
+    currentStatus: IpoStatus,
+    onSuccess?: () => void,
+  ) => {
+    if (!canFailIpo(currentStatus)) {
+      return;
+    }
+
+    setStatusActionError(null);
+    startStatusTransition(async () => {
+      try {
+        await updateIpoStatus(ipoId, { status: IPO_STATUS.FAILED });
+        await refetchIpos();
+        onSuccess?.();
+      } catch (error) {
+        setStatusActionError(
+          error instanceof Error ? error.message : "Could not fail IPO.",
+        );
+      }
+    });
+  };
+
   const clearActionError = useCallback(() => setActionError(null), []);
   const clearStatusActionError = useCallback(
     () => setStatusActionError(null),
@@ -95,6 +119,7 @@ export const useIpoActions = (refetchIpos: () => Promise<void>) => {
     submitCreate,
     submitStatusToggle,
     submitMint,
+    submitFail,
     clearActionError,
     clearStatusActionError
   };

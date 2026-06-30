@@ -7,6 +7,7 @@ import { LaunchIpoTrigger } from "@/features/ipo/components/create-ipo-modal";
 import { IpoInspectorPanel } from "@/features/ipo/components/ipo-inspector-panel";
 import { IpoTable } from "@/features/ipo/components/ipo-table";
 import { useIpoActions } from "@/features/ipo/use-ipo-actions";
+import { useIpoDetail } from "@/features/ipo/use-ipo-detail";
 import { useIpoList } from "@/features/ipo/use-ipo-list";
 import { useIpoSubscriptions } from "@/features/ipo/use-ipo-subscriptions";
 import { mapIpoToRow } from "@/lib/mappers/ipo";
@@ -30,6 +31,11 @@ export function IpoContent() {
     ipoIds,
     listRevision,
   );
+  const {
+    detail: selectedIpoDetail,
+    isLoading: isDetailLoading,
+    loadError: detailError
+  } = useIpoDetail(selectedIpoId, listRevision);
   const ipos = useMemo(
     () =>
       ipoRecords.map((ipo) =>
@@ -89,6 +95,33 @@ export function IpoContent() {
 
       {loadError ? <ApiErrorBanner message={loadError} /> : null}
 
+      <div className="grid grid-cols-4 gap-6">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded border border-outline-variant/5 bg-surface-container-low p-5"
+          >
+            <div className="mb-2 flex items-start justify-between">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                {stat.label}
+              </p>
+              <Icon name={stat.icon} className="text-primary" />
+            </div>
+            <p className="font-headline text-2xl font-bold tracking-tight">
+              {stat.value}
+            </p>
+            <p className={`mt-1 text-[10px] font-bold ${stat.changeColor}`}>
+              {stat.change}{" "}
+              {stat.sub ? (
+                <span className="ml-1 font-medium text-on-surface-variant">
+                  {stat.sub}
+                </span>
+              ) : null}
+            </p>
+          </div>
+        ))}
+      </div>
+
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 min-w-0 space-y-4 lg:col-span-8">
           <div className="flex items-center justify-between px-2">
@@ -128,6 +161,9 @@ export function IpoContent() {
             </span>
             <IpoInspectorPanel
               ipo={selectedIpo}
+              ipoDetail={selectedIpoDetail}
+              isDetailLoading={isDetailLoading}
+              detailError={detailError}
               subscription={selectedIpo ? summaries[selectedIpo.ipoId] : null}
               isSubscriptionLoading={
                 isSubscriptionsLoading &&
@@ -137,44 +173,7 @@ export function IpoContent() {
               ipoActions={ipoActions}
             />
           </div>
-
-          <div className="rounded-lg border border-outline-variant/10 bg-surface-bright/40 p-6 backdrop-blur-xl">
-            <div className="mb-4 flex items-center gap-2">
-              <Icon name="trending_up" className="text-secondary" />
-              <h4 className="font-headline text-sm font-bold">Market Intelligence</h4>
-            </div>
-            <p className="mb-4 text-xs leading-relaxed text-on-surface-variant">
-              IPO demand insights are not available from the current Swagger API.
-            </p>
-          </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded border border-outline-variant/5 bg-surface-container-low p-5"
-          >
-            <div className="mb-2 flex items-start justify-between">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-                {stat.label}
-              </p>
-              <Icon name={stat.icon} className="text-primary" />
-            </div>
-            <p className="font-headline text-2xl font-bold tracking-tight">
-              {stat.value}
-            </p>
-            <p className={`mt-1 text-[10px] font-bold ${stat.changeColor}`}>
-              {stat.change}{" "}
-              {stat.sub ? (
-                <span className="ml-1 font-medium text-on-surface-variant">
-                  {stat.sub}
-                </span>
-              ) : null}
-            </p>
-          </div>
-        ))}
       </div>
     </div>
   );

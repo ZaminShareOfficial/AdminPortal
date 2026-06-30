@@ -8,6 +8,7 @@ import {
   LATITUDE_MIN,
   LONGITUDE_MAX,
   LONGITUDE_MIN,
+  isEditablePropertyStatus,
   normalizePropertyStatusForForm,
   PROPERTY_STATUS
 } from "@/constants/property";
@@ -221,13 +222,15 @@ export const formToUpdatePayload = (
   const tokenPrice = parseInrToPaise(form.tokenPrice);
   const tokenSupply = Number(form.tokenSupply);
 
+  const status = parsePropertyStatus(form.status);
+
   return {
     title: form.title.trim(),
     location: form.location.trim(),
     valuation: valuation ?? undefined,
     tokenSupply: Number.isNaN(tokenSupply) ? undefined : tokenSupply,
     tokenPrice: tokenPrice ?? undefined,
-    status: parsePropertyStatus(form.status),
+    ...(isEditablePropertyStatus(status) ? { status } : {}),
     ...buildOptionalPayload(form)
   };
 };

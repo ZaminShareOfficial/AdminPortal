@@ -33,35 +33,13 @@ export const DashboardContent = () => {
           <ApiErrorBanner message={error} />
         </div>
       ) : null}
-      <div className="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-        <div>
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-primary">
-            Operational Overview
-          </p>
-          <h1 className="font-headline text-3xl font-extrabold text-on-surface">
-            Institutional Dashboard
-          </h1>
-        </div>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            className="flex items-center gap-2 border border-outline-variant px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-on-surface-variant transition-all hover:bg-surface-container-high"
-          >
-            Create Property
-          </button>
-          <button
-            type="button"
-            className="flex items-center gap-2 border border-outline-variant px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-on-surface-variant transition-all hover:bg-surface-container-high"
-          >
-            Approve Broker
-          </button>
-          <button
-            type="button"
-            className="saffron-gradient flex items-center gap-2 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-on-primary-fixed shadow-lg shadow-primary-container/20"
-          >
-            Launch IPO
-          </button>
-        </div>
+      <div className="mb-8">
+        <p className="mb-1 text-xs font-bold uppercase tracking-widest text-primary">
+          Operational Overview
+        </p>
+        <h1 className="font-headline text-3xl font-extrabold text-on-surface">
+          Institutional Dashboard
+        </h1>
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">

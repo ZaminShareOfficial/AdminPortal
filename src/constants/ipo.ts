@@ -1,0 +1,11 @@
+export const IPO_STATUS = {
+  CREATED: "CREATED",
+  PAUSED: "PAUSED",
+  MINTED: "MINTED",
+  FAILED: "FAILED"
+} as const;
+
+export const PRE_MINT_IPO_STATUSES = [
+  IPO_STATUS.CREATED,
+  IPO_STATUS.PAUSED
+] as const;
