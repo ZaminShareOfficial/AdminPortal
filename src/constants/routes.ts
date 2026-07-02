@@ -11,3 +11,9 @@ export type PublicPath = (typeof PUBLIC_PATHS)[number];
 
 export const isPublicPath = (pathname: string): pathname is PublicPath =>
   PUBLIC_PATHS.some((path) => pathname === path);
+
+export const TOKENS_PATH = "/tokens";
+export const TOKEN_REGISTRY_PROPERTY_PARAM = "propertyId";
+
+export const getTokenRegistryPath = (propertyId: string) =>
+  `${TOKENS_PATH}?${TOKEN_REGISTRY_PROPERTY_PARAM}=${encodeURIComponent(propertyId)}`;

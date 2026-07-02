@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   Button,
   Input,
@@ -10,6 +11,7 @@ import { useState } from "react";
 import { EnumSelect } from "@/components/admin/enum-select";
 import { Icon } from "@/components/admin/icon";
 import { NumericInputField } from "@/components/admin/numeric-input-field";
+import { getTokenRegistryPath } from "@/constants/routes";
 import {
   getPropertyStatusLabel,
   isEditablePropertyStatus,
@@ -34,6 +36,7 @@ const PropertyEditForm = ({
   propertyActions,
   onUpdateSuccess
 }: PropertyEditFormProps) => {
+  const router = useRouter();
   const [form, setForm] = useState<PropertyCreateFormValues>(() =>
     propertyToForm(property),
   );
@@ -52,6 +55,16 @@ const PropertyEditForm = ({
           GET /properties/{property.id} · PATCH /admin/properties/{property.id}
         </p>
       </div>
+
+      <Button
+        variant="secondary"
+        className="w-full"
+        onPress={() => router.push(getTokenRegistryPath(property.id))}
+        data-testid="go-to-registry-button"
+      >
+        <Icon name="toll" className="text-base" />
+        Go to Registry
+      </Button>
 
       <TextField
         name="title"

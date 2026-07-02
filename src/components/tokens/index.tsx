@@ -5,8 +5,10 @@ import { useTokensPageData } from "@/components/tokens/hooks";
 
 export const TokensPageContent = () => {
   const {
-    propertyTitle,
-    propertyId,
+    properties,
+    selectedPropertyId,
+    onPropertySelect,
+    isPropertyLoading,
     totalTokens,
     holderCount,
     largestPct,
@@ -28,8 +30,10 @@ export const TokensPageContent = () => {
 
   return (
     <TokensContent
-      propertyTitle={propertyTitle}
-      propertyId={propertyId}
+      properties={properties}
+      selectedPropertyId={selectedPropertyId}
+      onPropertySelect={onPropertySelect}
+      isPropertyLoading={isPropertyLoading}
       totalTokens={totalTokens}
       holderCount={holderCount}
       largestPct={largestPct}
