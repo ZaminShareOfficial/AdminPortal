@@ -1,10 +1,16 @@
 import { Icon } from "@/components/admin/icon";
 import { ApiErrorBanner } from "@/components/admin/api-error-banner";
+import {
+  PropertyAssetSelect,
+  type TokenRegistryProperty
+} from "@/components/tokens/components/property-asset-select";
 import type { HolderRow } from "@/lib/mappers/portfolio";
 
 type TokensContentProps = {
-  propertyTitle: string;
-  propertyId: string;
+  properties: TokenRegistryProperty[];
+  selectedPropertyId: string;
+  onPropertySelect: (propertyId: string) => void;
+  isPropertyLoading?: boolean;
   totalTokens: string;
   holderCount: string;
   largestPct: string;
@@ -13,13 +19,15 @@ type TokensContentProps = {
 };
 
 export function TokensContent({
-  propertyTitle,
-  propertyId,
+  properties,
+  selectedPropertyId,
+  onPropertySelect,
+  isPropertyLoading = false,
   totalTokens,
   holderCount,
   largestPct,
   holders,
-  error = null,
+  error = null
 }: TokensContentProps) {
   return (
     <div className="hide-scrollbar flex-1 space-y-8 overflow-y-auto bg-surface-dim p-8">
@@ -49,27 +57,12 @@ export function TokensContent({
       {error ? <ApiErrorBanner message={error} /> : null}
 
       <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-12 flex cursor-pointer flex-col justify-between rounded bg-surface-container p-6 transition-all hover:bg-surface-container-high lg:col-span-4">
-          <div className="space-y-4">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Select Active Asset</label>
-            <div className="flex items-center justify-between border-b border-outline-variant/30 pb-2">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded bg-surface-container-lowest text-xs font-bold text-primary">
-                  {propertyTitle.slice(0, 2).toUpperCase()}
-                </div>
-                <div>
-                  <p className="font-headline text-lg font-bold">{propertyTitle}</p>
-                  <p className="text-xs text-on-surface-variant">{propertyId}</p>
-                </div>
-              </div>
-              <Icon name="expand_more" className="text-on-surface-variant" />
-            </div>
-          </div>
-          <div className="mt-8 flex gap-4 text-xs">
-            <div className="rounded bg-tertiary/10 px-2 py-1 font-bold uppercase tracking-tighter text-tertiary">Verified</div>
-            <div className="rounded bg-secondary/10 px-2 py-1 font-bold uppercase tracking-tighter text-secondary">Fully Minted</div>
-          </div>
-        </div>
+        <PropertyAssetSelect
+          properties={properties}
+          selectedPropertyId={selectedPropertyId}
+          onSelect={onPropertySelect}
+          isLoading={isPropertyLoading}
+        />
         <div className="col-span-12 grid grid-cols-3 gap-4 lg:col-span-8">
           <div className="rounded border-l-2 border-primary bg-surface-container-lowest p-6">
             <p className="mb-2 text-[10px] uppercase tracking-widest text-on-surface-variant">Total Tokens</p>
