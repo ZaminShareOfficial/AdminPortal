@@ -2,17 +2,22 @@ import { getApiBaseUrl } from "@/lib/api/config";
 import { AUTH } from "@/constants/auth";
 import { handleClientUnauthorized } from "@/lib/auth/unauthorized-client";
 import { ApiError } from "@/lib/api/errors";
+import { getStoredAdminToken } from "@/lib/auth/token-storage";
 
 export async function clientFetch<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const url = `/api/v1${normalizedPath}`;
+  const url = getPublicApiUrl(normalizedPath);
 
   const headers = new Headers(options.headers);
   if (options.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
+  }
+  const token = getStoredAdminToken();
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const response = await fetch(url, {

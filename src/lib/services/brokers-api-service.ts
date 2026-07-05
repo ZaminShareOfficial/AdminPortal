@@ -8,12 +8,12 @@ import type {
 export const listBrokers = () =>
   adminApiRequest<AdminBrokerSummaryResponse[]>({
     method: "GET",
-    url: "/brokers"
+    url: "/admin/brokers"
   });
 
 export const reviewBroker = (brokerId: string, body: ReviewBrokerRequest) =>
   adminApiRequest<AdminBrokerDetailResponse>({
     method: "PATCH",
-    url: `/brokers/${brokerId}`,
+    url: `/admin/brokers/${brokerId}`,
     data: body
   });

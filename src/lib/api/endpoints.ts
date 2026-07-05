@@ -1,6 +1,6 @@
 /**
  * Swagger API map for the ZaminShare admin panel.
- * Base path: /api/v1 (proxied via next.config rewrites).
+ * Base path: /api/v1.
  */
 export const API_ENDPOINTS = {
   auth: {

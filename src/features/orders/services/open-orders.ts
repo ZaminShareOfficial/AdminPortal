@@ -8,7 +8,7 @@ import type { OpenOrder } from "@/features/orders/types";
 const getBulletinBoard = () =>
   adminApiRequest<BulletinBoardEntryResponse[]>({
     method: "GET",
-    url: "/orders/bulletin"
+    url: "/orders/all"
   });
 
 const getPropertyOrderBook = (propertyId: string) =>

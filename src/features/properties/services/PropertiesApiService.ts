@@ -21,13 +21,13 @@ export const getProperty = (id: string, signal?: AbortSignal) =>
 export const createProperty = (body: CreatePropertyRequest) =>
   adminApiRequest<PropertyResponse>({
     method: "POST",
-    url: "/properties",
+    url: "/admin/properties",
     data: body
   });
 
 export const updateProperty = (id: string, body: UpdatePropertyRequest) =>
   adminApiRequest<PropertyResponse>({
     method: "PATCH",
-    url: `/properties/${id}`,
+    url: `/admin/properties/${id}`,
     data: body
   });

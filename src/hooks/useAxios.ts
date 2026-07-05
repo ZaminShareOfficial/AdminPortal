@@ -4,6 +4,8 @@ import axios, { type AxiosRequestConfig } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { attachUnauthorizedRedirect } from "@/lib/auth/unauthorized-client";
 import { ApiError } from "@/lib/api/errors";
+import { getApiBaseUrl } from "@/lib/api/config";
+import { getStoredAdminToken } from "@/lib/auth/token-storage";
 
 type UseAxiosOptions = Omit<AxiosRequestConfig, "url"> & {
   autoFetch?: boolean;
@@ -19,10 +21,18 @@ type UseAxiosResult<T> = {
 };
 
 const apiClient = axios.create({
-  baseURL: "/api/v1",
+  baseURL: getApiBaseUrl(),
   headers: {
     "Content-Type": "application/json",
   },
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = getStoredAdminToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 attachUnauthorizedRedirect(apiClient);

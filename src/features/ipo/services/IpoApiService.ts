@@ -27,25 +27,25 @@ export const getIpo = (ipoId: string) =>
 export const createIpo = (body: CreateIpoRequest) =>
   adminApiRequest<CreateIpoResponse>({
     method: "POST",
-    url: "/ipos",
+    url: "/admin/ipos",
     data: body
   });
 
 export const updateIpoStatus = (ipoId: string, body: UpdateIpoStatusRequest) =>
   adminApiRequest<IpoStatusResponse>({
     method: "PATCH",
-    url: `/ipos/${ipoId}/status`,
+    url: `/admin/ipos/${ipoId}/status`,
     data: body
   });
 
 export const mintIpo = (ipoId: string) =>
   adminApiRequest<MintIpoResponse>({
     method: "POST",
-    url: `/ipos/${ipoId}/mint`
+    url: `/admin/ipos/${ipoId}/mint`
   });
 
 export const getIpoSubscriptionSummary = (ipoId: string) =>
   adminApiRequest<IpoSubscriptionSummaryResponse>({
     method: "GET",
-    url: `/ipos/${ipoId}/subscriptions`
+    url: `/admin/ipos/${ipoId}/subscriptions`
   });

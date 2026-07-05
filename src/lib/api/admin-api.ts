@@ -1,12 +1,22 @@
 import axios, { type AxiosRequestConfig } from "axios";
 import { attachUnauthorizedRedirect } from "@/lib/auth/unauthorized-client";
 import { ApiError } from "@/lib/api/errors";
+import { getApiBaseUrl } from "@/lib/api/config";
+import { getStoredAdminToken } from "@/lib/auth/token-storage";
 
 const adminClient = axios.create({
-  baseURL: "/api/admin",
+  baseURL: getApiBaseUrl(),
   headers: {
     "Content-Type": "application/json"
   }
+});
+
+adminClient.interceptors.request.use((config) => {
+  const token = getStoredAdminToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 attachUnauthorizedRedirect(adminClient);
@@ -26,4 +36,4 @@ export async function adminApiRequest<T>(config: AxiosRequestConfig): Promise<T>
   }
 }
 
-export const ADMIN_API_BASE_URL = "/api/admin";
+export const ADMIN_API_BASE_URL = getApiBaseUrl();

@@ -14,11 +14,11 @@ export const listUserPortfolios = () =>
 export const listPortfolioProperties = () =>
   adminApiRequest<PropertyPortfolioSummaryResponse[]>({
     method: "GET",
-    url: "/portfolio/properties"
+    url: "/admin/portfolio/properties"
   });
 
 export const getPropertyHolders = (propertyId: string) =>
   adminApiRequest<PropertyHoldersResponse>({
     method: "GET",
-    url: `/portfolio/properties/${propertyId}`
+    url: `/admin/portfolio/properties/${propertyId}`
   });

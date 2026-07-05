@@ -3,10 +3,12 @@ import type {
   VerifyOtpResponse
 } from "@/types/backend";
 import { AUTH } from "@/constants/auth";
+import { getPublicApiUrl } from "@/lib/api/browser-client";
 import { getErrorMessage } from "@/lib/api/errors";
+import { clearStoredAdminToken, storeAdminToken } from "@/lib/auth/token-storage";
 
 async function authFetch<T>(path: string, body: unknown): Promise<T> {
-  const response = await fetch(path, {
+  const response = await fetch(getPublicApiUrl(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -30,8 +32,9 @@ async function authFetch<T>(path: string, body: unknown): Promise<T> {
 
 export async function sendAdminOtp(mobileNumber: string) {
   try {
-    const data = await authFetch<SendOtpResponse>("/api/auth/otp", {
+    const data = await authFetch<SendOtpResponse>("/otp", {
       mobileNumber,
+      challengeType: "OTP"
     });
 
     if (!data.sessionId) {
@@ -50,10 +53,10 @@ export async function verifyAdminOtp(payload: {
   challenge: string;
 }) {
   try {
-    const data = await authFetch<VerifyOtpResponse>("/api/auth/otp/verify", {
+    const data = await authFetch<VerifyOtpResponse>("/otp/verify", {
       sessionId: payload.sessionId,
-      mobileNumber: payload.mobileNumber,
       challenge: payload.challenge,
+      challengeType: "OTP"
     });
 
     if (!data.token) {
@@ -89,8 +92,11 @@ export async function persistSession(token: string) {
     }
     throw new Error(message);
   }
+
+  storeAdminToken(token);
 }
 
 export async function clearSession() {
+  clearStoredAdminToken();
   await fetch("/api/auth/logout", { method: "POST" });
 }
